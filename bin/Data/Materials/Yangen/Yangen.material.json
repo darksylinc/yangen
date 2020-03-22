@@ -17,6 +17,103 @@
             [
                 {}
             ]
+        },
+
+        "Yangen/MergeNormalMaps" :
+        {
+            "threads_per_group" : [8, 8, 1],
+            "thread_groups" : [1, 1, 1],
+
+            "source" : "YangenMergeNormalMaps_cs",
+            "pieces" : ["CrossPlatformSettings_piece_all", "UavCrossPlatform_piece_all", "YangenMergeNormalMaps_piece_cs.any"],
+            "inform_shader_of_texture_data_change" : true,
+            "thread_groups_based_on_uav" : 0,
+
+            "uav_units" : 1,
+
+            "textures" :
+            [
+                {},
+                {}
+            ],
+
+            "params_glsl":
+            [
+                ["normalMap0",		[0], "int"],
+                ["normalMap1",		[1], "int"]
+            ]
+        },
+
+        "Yangen/GaussianBlurH" :
+        {
+            "threads_per_group" : [32, 2, 1],
+            "thread_groups" : [8, 512, 1],
+
+            "source" : "GaussianBlurBase_cs",
+            "pieces" : ["YangenGaussianBlur_cs"],
+            "inform_shader_of_texture_data_change" : true,
+
+            "uav_units" : 1,
+
+            "textures" :
+            [
+                {
+                    "sampler" : "PointClamp"
+                }
+            ],
+
+            "params" :
+            [
+                ["g_f4OutputSize",	"packed_texture_size", 0]
+            ],
+
+            "params_glsl" :
+            [
+                ["inputImage",		[0], "int"],
+                ["outputImage",		[0], "int"]
+            ],
+
+            "properties" :
+            {
+                "horizontal_pass" : 1,
+                "kernel_radius" : 8
+            }
+        },
+
+        "Yangen/GaussianBlurV" :
+        {
+            "threads_per_group" : [32, 2, 1],
+            "thread_groups" : [512, 8, 1],
+
+            "source" : "GaussianBlurBase_cs",
+            "pieces" : ["YangenGaussianBlur_cs"],
+            "inform_shader_of_texture_data_change" : true,
+
+            "uav_units" : 1,
+
+            "textures" :
+            [
+                {
+                    "sampler" : "PointClamp"
+                }
+            ],
+
+            "params" :
+            [
+                ["g_f4OutputSize",	"packed_texture_size", 0]
+            ],
+
+            "params_glsl" :
+            [
+                ["inputImage",		[0], "int"],
+                ["outputImage",		[0], "int"]
+            ],
+
+            "properties" :
+            {
+                "horizontal_pass" : 0,
+                "kernel_radius" : 8
+            }
         }
     }
 }

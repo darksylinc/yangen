@@ -1,0 +1,24 @@
+
+//#include "SyntaxHighlightingMisc.h"
+
+void header()
+{
+	// @piece( HeaderCS )
+	// @end
+}
+
+void body( uint3 gl_GlobalInvocationID )
+{
+	// @piece( BodyCS )
+
+	int2 iuv = int2( gl_GlobalInvocationID.xy );
+
+	float3 nm0 = OGRE_Load2D( normalMap0, iuv, 0 ).xyz;
+	float3 nm1 = OGRE_Load2D( normalMap1, iuv, 0 ).xyz;
+
+	float3 finalNormal = normalize( nm0 + nm1 );
+
+	OGRE_imageWrite2DArray4( outNormalMap, uint3( iuv, 0u ), float4( finalNormal, 1.0f ) );
+
+	// @end
+}

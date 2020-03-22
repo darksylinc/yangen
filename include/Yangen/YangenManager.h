@@ -46,6 +46,9 @@ namespace Ogre
 
 		void uploadParams();
 
+		static void setGaussianFilterParams( Ogre::HlmsComputeJob *job, Ogre::uint8 kernelRadius,
+											 float gaussianDeviationFactor );
+
 	public:
 		YangenManager( const String &texName, HlmsManager *hlmsManager,
 					   CompositorManager2 *compositorManager, TextureGpuManager *textureGpuManager,
