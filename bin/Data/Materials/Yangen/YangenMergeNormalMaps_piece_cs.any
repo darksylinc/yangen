@@ -4,6 +4,20 @@
 void header()
 {
 	// @piece( HeaderCS )
+	/// Reoriented Normal Mapping (RNM) implementation
+	///
+	/// See https://blog.selfshadow.com/publications/blending-in-detail/
+	///
+	/// Note the code on that website assumes the normals are in [0; 1]
+	/// format whereas ours are in [-1;1] hence the slightly different coefficients
+	INLINE float3 rnmBlend( float3 normalBase, float3 normalDetail )
+	{
+		float3 t = normalBase.xyz + float3( 0.0f, 0.0f, 1.0f );
+		float3 u = normalDetail.xyz * float3( -1.0f, -1.0f, 1.0f );
+		//t.z += 0.0001; // We know normalBase.z is never negative so this isn't needed
+		float3 r = t * dot( t, u ) / t.z - u;
+		return normalize( r );
+	}
 	// @end
 }
 
@@ -16,7 +30,7 @@ void body( uint3 gl_GlobalInvocationID )
 	float3 nm0 = OGRE_Load2D( normalMap0, iuv, 0 ).xyz;
 	float3 nm1 = OGRE_Load2D( normalMap1, iuv, 0 ).xyz;
 
-	float3 finalNormal = normalize( nm0 + nm1 );
+	float3 finalNormal = rnmBlend( nm1, lerp( nm0, float3( 0, 0, 1 ), 0.75 ) );
 
 	OGRE_imageWrite2DArray4( outNormalMap, uint3( iuv, 0u ), float4( finalNormal, 1.0f ) );
 
