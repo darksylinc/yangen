@@ -1,0 +1,22 @@
+compositor_node Yangen/Node
+{
+	in 0 height_map
+	in 1 normal_map
+
+	target normal_map
+	{
+		pass compute
+		{
+			job Yangen/HeightToNormalMap
+			input	0	height_map
+
+			uav		0	normal_map write
+		}
+	}
+}
+
+workspace Yangen/Gen
+{
+	connect_external 0 Yangen/Node 0
+	connect_external 1 Yangen/Node 1
+}

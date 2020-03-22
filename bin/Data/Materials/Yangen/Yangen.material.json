@@ -1,0 +1,22 @@
+{
+    "compute" :
+    {
+        "Yangen/HeightToNormalMap" :
+        {
+            "threads_per_group" : [8, 8, 1],
+            "thread_groups" : [1, 1, 1],
+
+            "source" : "HeightmapToNormal_cs",
+            "pieces" : ["CrossPlatformSettings_piece_all", "UavCrossPlatform_piece_all", "HeightmapToNormal_piece_cs.any"],
+            "inform_shader_of_texture_data_change" : true,
+            "thread_groups_based_on_uav" : 0,
+
+            "uav_units" : 1,
+
+            "textures" :
+            [
+                {}
+            ]
+        }
+    }
+}
