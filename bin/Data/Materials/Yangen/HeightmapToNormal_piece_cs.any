@@ -84,6 +84,7 @@ void body( uint3 gl_GlobalInvocationID )
 	vNormal += cross( ( vN1 - v00 ), ( v01 - v00 ) );
 
 	vNormal = normalize( vNormal );
+	vNormal.xyz = vNormal.xzy * float3( 1.0f, -1.0f, 1.0f );
 
 	// vNormal = vNormal * 0.5f + 0.5f;
 

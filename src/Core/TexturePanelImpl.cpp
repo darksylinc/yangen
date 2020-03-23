@@ -25,7 +25,9 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 	m_yangenManager( yangenManager )
 {
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapDepthSlider, m_normalMapDepthTextCtrl, -20.0f, 20.0f ) );
+		new ConvertScaled( m_normalMapDepth0Slider, m_normalMapDepth0TextCtrl, -20.0f, 20.0f ) );
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_normalMapDepth1Slider, m_normalMapDepth1TextCtrl, -20.0f, 20.0f ) );
 
 	mInitializing = false;
 }
@@ -165,10 +167,16 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 	if( mInitializing )
 		return;
 
-	if( textCtrl == m_normalMapDepthTextCtrl )
+	if( textCtrl == m_normalMapDepth0TextCtrl )
 	{
 		m_yangenManager->setHeightMapToNormalMapDepthScale(
-			getValueFrom( m_normalMapDepthTextCtrl, 1.0f ) );
+			getValueFrom( m_normalMapDepth0TextCtrl, 1.0f ), 0u );
+		m_yangenManager->process();
+	}
+	else if( textCtrl == m_normalMapDepth1TextCtrl )
+	{
+		m_yangenManager->setHeightMapToNormalMapDepthScale(
+			getValueFrom( m_normalMapDepth1TextCtrl, 1.0f ), 1u );
 		m_yangenManager->process();
 	}
 }

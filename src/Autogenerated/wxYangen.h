@@ -74,8 +74,14 @@ class TexturePanel : public wxPanel
 		wxButton* m_button7;
 		wxChoice* m_choice1;
 		wxStaticText* m_staticText7;
-		wxSlider* m_normalMapDepthSlider;
-		wxTextCtrl* m_normalMapDepthTextCtrl;
+		wxSlider* m_normalMapDepth0Slider;
+		wxTextCtrl* m_normalMapDepth0TextCtrl;
+		wxStaticText* m_staticText71;
+		wxSlider* m_normalMapDepth1Slider;
+		wxTextCtrl* m_normalMapDepth1TextCtrl;
+		wxStaticText* m_staticText711;
+		wxSlider* m_normalMapDepth2Slider1;
+		wxTextCtrl* m_normalMapDepth1TextCtrl2;
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnScroll( wxScrollEvent& event ) { event.Skip(); }

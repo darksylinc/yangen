@@ -8,11 +8,13 @@
 
 #include "OgrePrerequisites.h"
 
+#include "Compositor/OgreCompositorWorkspaceListener.h"
+
 #include "OgreTextureGpu.h"
 
 namespace Ogre
 {
-	class YangenManager
+	class YangenManager : public CompositorWorkspaceListener
 	{
 		String m_texName;
 
@@ -29,10 +31,10 @@ namespace Ogre
 
 		Camera *m_dummyCamera;
 
-		ConstBufferPacked *m_heightmapToNormalParams;
+		ConstBufferPacked *m_heightmapToNormalParams[3];
 		HlmsComputeJob *   m_heightmapToNormalJob;
 
-		float m_heightMapToNormalMapDepthScale;
+		float m_heightMapToNormalMapDepthScale[3];
 
 		/// Unloads everything. Implies calling YangenManager::YangenManagerunloadGenerationResources
 		void unloadTextures();
@@ -53,13 +55,15 @@ namespace Ogre
 		YangenManager( const String &texName, HlmsManager *hlmsManager,
 					   CompositorManager2 *compositorManager, TextureGpuManager *textureGpuManager,
 					   SceneManager *sceneManager );
-		~YangenManager();
+		virtual ~YangenManager();
 
 		void loadFromHeightmap( const String &filename, const String &resourceGroup );
 
 		void process();
 
-		void setHeightMapToNormalMapDepthScale( float depth );
+		void setHeightMapToNormalMapDepthScale( float depth, uint8 detailIdx );
+
+		virtual void passPreExecute( CompositorPass *pass );
 
 		TextureGpu *getNormalMap() const { return m_normalMap; }
 	};

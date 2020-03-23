@@ -30,6 +30,8 @@ compositor_node Yangen/Node
 			job Yangen/HeightToNormalMap
 			input	0	height_map
 			uav		0	tmpNormalMap0 write
+
+			identifier 10
 		}
 
 		pass compute
@@ -37,6 +39,8 @@ compositor_node Yangen/Node
 			job Yangen/HeightToNormalMap
 			input	0	blurredHeight1
 			uav		0	tmpNormalMap1 write
+
+			identifier 11
 		}
 
 		pass compute

@@ -38,10 +38,17 @@ namespace Ogre
 		m_compositorManager( compositorManager ),
 		m_textureGpuManager( textureGpuManager ),
 		m_sceneManager( sceneManager ),
-		m_dummyCamera( 0 ),
-		m_heightmapToNormalParams( 0 ),
-		m_heightMapToNormalMapDepthScale( 20.0f )
+		m_dummyCamera( 0 )
 	{
+		m_heightMapToNormalMapDepthScale[0] = 0.5f;
+		m_heightMapToNormalMapDepthScale[1] = 20.0f;
+		m_heightMapToNormalMapDepthScale[2] = 0.0f;
+
+		const size_t numParams =
+			sizeof( m_heightmapToNormalParams ) / sizeof( m_heightmapToNormalParams[0] );
+		for( size_t i = 0u; i < numParams; ++i )
+			m_heightmapToNormalParams[i] = 0;
+
 		m_heightmapToNormalJob =
 			hlmsManager->getComputeHlms()->findComputeJob( "Yangen/HeightToNormalMap" );
 	};
@@ -94,8 +101,13 @@ namespace Ogre
 		unloadGenerationResources();
 
 		VaoManager *vaoManager = m_textureGpuManager->getVaoManager();
-		m_heightmapToNormalParams =
-			vaoManager->createConstBuffer( sizeof( HeightmapToNormalParams ), BT_DEFAULT, 0, false );
+		const size_t numParams =
+			sizeof( m_heightmapToNormalParams ) / sizeof( m_heightmapToNormalParams[0] );
+		for( size_t i = 0u; i < numParams; ++i )
+		{
+			m_heightmapToNormalParams[i] =
+				vaoManager->createConstBuffer( sizeof( HeightmapToNormalParams ), BT_DEFAULT, 0, false );
+		}
 
 		// Tell Ogre it's a shadow casting camera to avoid penalizing performance
 		m_dummyCamera = m_sceneManager->createCamera( m_texName + "/DummyCam", false );
@@ -108,6 +120,7 @@ namespace Ogre
 
 		m_workspace = m_compositorManager->addWorkspace( m_sceneManager, channels, m_dummyCamera,
 														 "Yangen/Gen", false );
+		m_workspace->addListener( this );
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::unloadGenerationResources()
@@ -131,16 +144,20 @@ namespace Ogre
 	*/
 	void YangenManager::uploadParams()
 	{
-		HeightmapToNormalParams heightmapToNormalParams;
-		heightmapToNormalParams.heightMapResolution[0] = m_heightMap->getWidth();
-		heightmapToNormalParams.heightMapResolution[1] = m_heightMap->getHeight();
-		heightmapToNormalParams.heightMapArrayIdx = m_heightMap->getInternalSliceStart();
-		heightmapToNormalParams.depthScale = m_heightMapToNormalMapDepthScale;
+		const size_t numParams =
+			sizeof( m_heightmapToNormalParams ) / sizeof( m_heightmapToNormalParams[0] );
+		for( size_t i = 0u; i < numParams; ++i )
+		{
+			HeightmapToNormalParams heightmapToNormalParams;
+			heightmapToNormalParams.heightMapResolution[0] = m_heightMap->getWidth();
+			heightmapToNormalParams.heightMapResolution[1] = m_heightMap->getHeight();
+			heightmapToNormalParams.heightMapArrayIdx = m_heightMap->getInternalSliceStart();
+			heightmapToNormalParams.depthScale = m_heightMapToNormalMapDepthScale[i];
 
-		m_heightmapToNormalParams->upload( &heightmapToNormalParams, 0u,
-										   sizeof( heightmapToNormalParams ) );
-
-		m_heightmapToNormalJob->setConstBuffer( 0u, m_heightmapToNormalParams );
+			m_heightmapToNormalParams[i]->upload( &heightmapToNormalParams, 0u,
+												  sizeof( heightmapToNormalParams ) );
+		}
+		m_heightmapToNormalJob->setConstBuffer( 0u, m_heightmapToNormalParams[0] );
 
 		HlmsCompute *hlmsCompute = static_cast<HlmsCompute *>( m_heightmapToNormalJob->getCreator() );
 		HlmsComputeJob *gaussJob = 0;
@@ -244,8 +261,16 @@ namespace Ogre
 		m_workspace->_endUpdate( false );
 	}
 	//-------------------------------------------------------------------------
-	void YangenManager::setHeightMapToNormalMapDepthScale( float depth )
+	void YangenManager::setHeightMapToNormalMapDepthScale( float depth, uint8 detailIdx )
 	{
-		m_heightMapToNormalMapDepthScale = depth;
+		assert( detailIdx < 3u );
+		m_heightMapToNormalMapDepthScale[detailIdx] = depth;
+	}
+	//-------------------------------------------------------------------------
+	void YangenManager::passPreExecute( CompositorPass *pass )
+	{
+		const uint32 identifier = pass->getDefinition()->mIdentifier;
+		if( identifier >= 10u && identifier <= 11u )
+			m_heightmapToNormalJob->setConstBuffer( 0u, m_heightmapToNormalParams[identifier - 10u] );
 	}
 }  // namespace Ogre
