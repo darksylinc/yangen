@@ -6,8 +6,8 @@
 
 #include "Helpers/LinkedWidgets.h"
 
-#include <wx/string.h>
 #include <wx/slider.h>
+#include <wx/string.h>
 #include <wx/textctrl.h>
 
 #include <algorithm>
@@ -15,26 +15,41 @@
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-ConvertUnit::ConvertUnit( wxSlider *slider, wxTextCtrl *textCtrl ) :
-	ConversionBase( slider, textCtrl ) {}
+ConvertUnit::ConvertUnit( wxSlider *slider, wxTextCtrl *textCtrl, bool isInteger ) :
+	ConversionBase( slider, textCtrl, isInteger )
+{
+}
 
 void ConvertUnit::toSlider()
 {
 	wxString value = m_textCtrl->GetValue();
 	double fValue = wxAtof( value );
+	if( m_isInteger )
+		fValue = round( fValue );
 	m_slider->SetValue( static_cast<int>( fValue * 100.0 + 0.5 ) );
 }
 void ConvertUnit::toTextCtrl()
 {
 	double value = (double)m_slider->GetValue();
 	value /= 100.0;
-	m_textCtrl->SetValue( wxString::Format( wxT("%.05lf"), value ) );
+	if( m_isInteger )
+	{
+		value = round( value );
+		if( value == -0 )
+			value = 0;
+		m_textCtrl->SetValue( wxString::Format( wxT("%.0lf"), value ) );
+	}
+	else
+	{
+		m_textCtrl->SetValue( wxString::Format( wxT("%.05lf"), value ) );
+	}
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-ConvertScaled::ConvertScaled( wxSlider *slider, wxTextCtrl *textCtrl, float minValue, float maxValue ) :
-	ConversionBase( slider, textCtrl ),
+ConvertScaled::ConvertScaled( wxSlider *slider, wxTextCtrl *textCtrl, float minValue, float maxValue,
+							  bool isInteger ) :
+	ConversionBase( slider, textCtrl, isInteger ),
 	m_minValue( minValue ),
 	m_maxValue( maxValue )
 {
@@ -45,21 +60,31 @@ void ConvertScaled::toSlider()
 	wxString value = m_textCtrl->GetValue();
 	double fValue = wxAtof( value );
 	fValue = std::max<float>( fValue, m_minValue );
-	m_slider->SetValue( static_cast<int>( (fValue - m_minValue) /
-										  (m_maxValue - m_minValue) * 100.0 + 0.5 ) );
+	if( m_isInteger )
+		fValue = round( fValue );
+	m_slider->SetValue(
+		static_cast<int>( ( fValue - m_minValue ) / ( m_maxValue - m_minValue ) * 100.0 + 0.5 ) );
 }
 void ConvertScaled::toTextCtrl()
 {
 	double value = (double)m_slider->GetValue() / 100.0;
-	value = value * (m_maxValue - m_minValue) + m_minValue;
-	m_textCtrl->SetValue( wxString::Format( wxT("%.05lf"), value ) );
+	value = value * ( m_maxValue - m_minValue ) + m_minValue;
+	if( m_isInteger )
+	{
+		value = round( value );
+		if( value == -0 )
+			value = 0;
+		m_textCtrl->SetValue( wxString::Format( wxT("%.0lf"), value ) );
+	}
+	else
+	{
+		m_textCtrl->SetValue( wxString::Format( wxT("%.05lf"), value ) );
+	}
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-ConvertPair::ConvertPair( ConversionBase *min, ConversionBase *max ) :
-	m_min( min ),
-	m_max( max )
+ConvertPair::ConvertPair( ConversionBase *min, ConversionBase *max ) : m_min( min ), m_max( max )
 {
 }
 //-----------------------------------------------------------------------------
@@ -115,5 +140,5 @@ void ConvertPair::textCtrlChanged( wxTextCtrl *textCtrl )
 //-----------------------------------------------------------------------------
 void setValue( wxTextCtrl *textCtrl, float value )
 {
-	textCtrl->SetValue( wxString::Format( wxT("%.05lf"), value ) );
+	textCtrl->SetValue( wxString::Format( wxT( "%.05lf" ), value ) );
 }

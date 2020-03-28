@@ -139,11 +139,55 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 
 	fgSizer3->Add( bSizer1511, 1, wxEXPAND, 5 );
 
-	m_normalMapDepth2Slider1 = new wxSlider( m_scrolledWindow2, wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	fgSizer3->Add( m_normalMapDepth2Slider1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	m_normalMapDepth2Slider = new wxSlider( m_scrolledWindow2, wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer3->Add( m_normalMapDepth2Slider, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_normalMapDepth1TextCtrl2 = new wxTextCtrl( m_scrolledWindow2, wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer3->Add( m_normalMapDepth1TextCtrl2, 0, wxALL, 5 );
+	m_normalMapDepth2TextCtrl = new wxTextCtrl( m_scrolledWindow2, wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer3->Add( m_normalMapDepth2TextCtrl, 0, wxALL, 5 );
+
+	wxBoxSizer* bSizer152;
+	bSizer152 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer152->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText72 = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Medium Radius"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText72->Wrap( -1 );
+	bSizer152->Add( m_staticText72, 0, wxALL, 5 );
+
+
+	bSizer152->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer3->Add( bSizer152, 1, wxEXPAND, 5 );
+
+	m_normalMapRadius1Slider = new wxSlider( m_scrolledWindow2, wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer3->Add( m_normalMapRadius1Slider, 1, wxALL|wxEXPAND, 5 );
+
+	m_normalMapRadius1TextCtrl = new wxTextCtrl( m_scrolledWindow2, wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer3->Add( m_normalMapRadius1TextCtrl, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer1521;
+	bSizer1521 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer1521->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText721 = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Large Radius"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText721->Wrap( -1 );
+	bSizer1521->Add( m_staticText721, 0, wxALL, 5 );
+
+
+	bSizer1521->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer3->Add( bSizer1521, 1, wxEXPAND, 5 );
+
+	m_normalMapRadius2Slider = new wxSlider( m_scrolledWindow2, wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer3->Add( m_normalMapRadius2Slider, 1, wxALL|wxEXPAND, 5 );
+
+	m_normalMapRadius2TextCtrl = new wxTextCtrl( m_scrolledWindow2, wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer3->Add( m_normalMapRadius2TextCtrl, 1, wxALL|wxEXPAND, 5 );
 
 
 	m_bSizer2->Add( fgSizer3, 0, wxEXPAND, 5 );
@@ -179,16 +223,36 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_normalMapDepth1Slider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapDepth1Slider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapDepth1TextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth1TextCtrl2->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2TextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1TextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2TextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
 }
 
 TexturePanel::~TexturePanel()
@@ -214,15 +278,35 @@ TexturePanel::~TexturePanel()
 	m_normalMapDepth1Slider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapDepth1Slider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapDepth1TextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth2Slider1->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
-	m_normalMapDepth1TextCtrl2->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2Slider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapDepth2TextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1Slider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius1TextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2Slider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_normalMapRadius2TextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
 
 }

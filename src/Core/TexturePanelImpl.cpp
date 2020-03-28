@@ -28,6 +28,13 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 		new ConvertScaled( m_normalMapDepth0Slider, m_normalMapDepth0TextCtrl, -20.0f, 20.0f ) );
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapDepth1Slider, m_normalMapDepth1TextCtrl, -20.0f, 20.0f ) );
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_normalMapDepth2Slider, m_normalMapDepth2TextCtrl, -20.0f, 20.0f ) );
+
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_normalMapRadius1Slider, m_normalMapRadius1TextCtrl, 2.0f, 64.0f, true ) );
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_normalMapRadius2Slider, m_normalMapRadius2TextCtrl, 2.0f, 64.0f, true ) );
 
 	mInitializing = false;
 }
@@ -177,6 +184,28 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 	{
 		m_yangenManager->setHeightMapToNormalMapDepthScale(
 			getValueFrom( m_normalMapDepth1TextCtrl, 1.0f ), 1u );
+		m_yangenManager->process();
+	}
+	else if( textCtrl == m_normalMapDepth2TextCtrl )
+	{
+		m_yangenManager->setHeightMapToNormalMapDepthScale(
+			getValueFrom( m_normalMapDepth2TextCtrl, 1.0f ), 2u );
+		m_yangenManager->process();
+	}
+	else if( textCtrl == m_normalMapRadius1TextCtrl )
+	{
+		uint8_t radius = static_cast<uint8_t>( getValueFrom( m_normalMapRadius1TextCtrl, 2.0f ) );
+		if( radius & 0x01u )
+			radius = radius + 1u;
+		m_yangenManager->setHeightMapToNormalMapRadius( radius, 1u );
+		m_yangenManager->process();
+	}
+	else if( textCtrl == m_normalMapRadius2TextCtrl )
+	{
+		uint8_t radius = static_cast<uint8_t>( getValueFrom( m_normalMapRadius2TextCtrl, 2.0f ) );
+		if( radius & 0x01u )
+			radius = radius + 1u;
+		m_yangenManager->setHeightMapToNormalMapRadius( radius, 2u );
 		m_yangenManager->process();
 	}
 }

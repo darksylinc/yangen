@@ -38,11 +38,15 @@ namespace Ogre
 		m_compositorManager( compositorManager ),
 		m_textureGpuManager( textureGpuManager ),
 		m_sceneManager( sceneManager ),
-		m_dummyCamera( 0 )
+		m_dummyCamera( 0 ),
+		m_defaultGenerateAllConstantDefinitionArrayEntries( false )
 	{
 		m_heightMapToNormalMapDepthScale[0] = 0.5f;
 		m_heightMapToNormalMapDepthScale[1] = 20.0f;
 		m_heightMapToNormalMapDepthScale[2] = 0.0f;
+
+		m_heightMapToNormalMapBlurRadius[0] = 8u;
+		m_heightMapToNormalMapBlurRadius[1] = 32u;
 
 		const size_t numParams =
 			sizeof( m_heightmapToNormalParams ) / sizeof( m_heightmapToNormalParams[0] );
@@ -158,15 +162,6 @@ namespace Ogre
 												  sizeof( heightmapToNormalParams ) );
 		}
 		m_heightmapToNormalJob->setConstBuffer( 0u, m_heightmapToNormalParams[0] );
-
-		HlmsCompute *hlmsCompute = static_cast<HlmsCompute *>( m_heightmapToNormalJob->getCreator() );
-		HlmsComputeJob *gaussJob = 0;
-
-		gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurH" );
-		setGaussianFilterParams( gaussJob, 8u, 0.5f );
-
-		gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurV" );
-		setGaussianFilterParams( gaussJob, 8u, 0.5f );
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::setGaussianFilterParams( Ogre::HlmsComputeJob *job, Ogre::uint8 kernelRadius,
@@ -207,16 +202,16 @@ namespace Ogre
 
 		// Remove shader constants from previous calls (needed in case we've reduced the radius size)
 		ShaderParams::ParamVec::iterator itor = shaderParams.mParams.begin();
-		ShaderParams::ParamVec::iterator end = shaderParams.mParams.end();
+		ShaderParams::ParamVec::iterator endt = shaderParams.mParams.end();
 
-		while( itor != end )
+		while( itor != endt )
 		{
 			String::size_type pos = itor->name.find( "c_weights[" );
 
 			if( pos != String::npos )
 			{
 				itor = shaderParams.mParams.erase( itor );
-				end = shaderParams.mParams.end();
+				endt = shaderParams.mParams.end();
 			}
 			else
 			{
@@ -256,6 +251,9 @@ namespace Ogre
 
 		m_waitableTexture->waitForData();
 
+		m_defaultGenerateAllConstantDefinitionArrayEntries =
+			Ogre::GpuNamedConstants::getGenerateAllConstantDefinitionArrayEntries();
+
 		m_workspace->_beginUpdate( false );
 		m_workspace->_update();
 		m_workspace->_endUpdate( false );
@@ -267,10 +265,47 @@ namespace Ogre
 		m_heightMapToNormalMapDepthScale[detailIdx] = depth;
 	}
 	//-------------------------------------------------------------------------
+	void YangenManager::setHeightMapToNormalMapRadius( uint8 radius, uint8 detailIdx )
+	{
+		assert( detailIdx > 0u && detailIdx < 3u );
+		assert( radius > 1u && radius <= 65u );
+		assert( !( radius & 0x01u ) && "Radius must be even!" );
+		m_heightMapToNormalMapBlurRadius[detailIdx - 1u] = radius;
+	}
+	//-------------------------------------------------------------------------
 	void YangenManager::passPreExecute( CompositorPass *pass )
 	{
 		const uint32 identifier = pass->getDefinition()->mIdentifier;
-		if( identifier >= 10u && identifier <= 11u )
+		if( identifier >= 10u && identifier <= 12u )
 			m_heightmapToNormalJob->setConstBuffer( 0u, m_heightmapToNormalParams[identifier - 10u] );
+		else if( identifier >= 21u && identifier <= 22u )
+		{
+			HlmsCompute *hlmsCompute =
+				static_cast<HlmsCompute *>( m_heightmapToNormalJob->getCreator() );
+			HlmsComputeJob *gaussJob = 0;
+
+			// We need this set so that large filter radiuses actually work
+			Ogre::GpuNamedConstants::setGenerateAllConstantDefinitionArrayEntries( true );
+
+			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurH" );
+			setGaussianFilterParams( gaussJob, m_heightMapToNormalMapBlurRadius[identifier - 21u],
+									 0.5f );
+
+			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurV" );
+			setGaussianFilterParams( gaussJob, m_heightMapToNormalMapBlurRadius[identifier - 21u],
+									 0.5f );
+		}
+	}
+	//-------------------------------------------------------------------------
+	void YangenManager::passPosExecute( CompositorPass *pass )
+	{
+		const uint32 identifier = pass->getDefinition()->mIdentifier;
+		if( identifier == 32u )
+		{
+			// Restore this setting after the compute shaders have been generated,
+			// since it affects all shaders globally
+			Ogre::GpuNamedConstants::setGenerateAllConstantDefinitionArrayEntries(
+				m_defaultGenerateAllConstantDefinitionArrayEntries );
+		}
 	}
 }  // namespace Ogre

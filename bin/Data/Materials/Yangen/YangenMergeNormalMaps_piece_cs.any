@@ -29,8 +29,11 @@ void body( uint3 gl_GlobalInvocationID )
 
 	float3 nm0 = OGRE_Load2D( normalMap0, iuv, 0 ).xyz;
 	float3 nm1 = OGRE_Load2D( normalMap1, iuv, 0 ).xyz;
+	float3 nm2 = OGRE_Load2D( normalMap2, iuv, 0 ).xyz;
 
-	float3 finalNormal = rnmBlend( nm1, nm0 );
+	float3 finalNormal;
+	finalNormal = rnmBlend( nm2, nm1 );
+	finalNormal = rnmBlend( finalNormal, nm0 );
 
 	OGRE_imageWrite2DArray4( outNormalMap, uint3( iuv, 0u ), float4( finalNormal, 1.0f ) );
 

@@ -7,6 +7,7 @@ layout (@insertpiece(uav0_pf_type)) uniform restrict writeonly image2DArray outN
 
 uniform sampler2D normalMap0;
 uniform sampler2D normalMap1;
+uniform sampler2D normalMap2;
 
 layout( local_size_x = @value( threads_per_group_x ),
 		local_size_y = @value( threads_per_group_y ),

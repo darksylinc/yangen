@@ -34,13 +34,15 @@
             "textures" :
             [
                 {},
+                {},
                 {}
             ],
 
             "params_glsl":
             [
                 ["normalMap0",		[0], "int"],
-                ["normalMap1",		[1], "int"]
+                ["normalMap1",		[1], "int"],
+                ["normalMap2",		[2], "int"]
             ]
         },
 

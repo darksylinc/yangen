@@ -35,6 +35,9 @@ namespace Ogre
 		HlmsComputeJob *   m_heightmapToNormalJob;
 
 		float m_heightMapToNormalMapDepthScale[3];
+		uint8 m_heightMapToNormalMapBlurRadius[2];
+
+		bool m_defaultGenerateAllConstantDefinitionArrayEntries;
 
 		/// Unloads everything. Implies calling YangenManager::YangenManagerunloadGenerationResources
 		void unloadTextures();
@@ -62,8 +65,16 @@ namespace Ogre
 		void process();
 
 		void setHeightMapToNormalMapDepthScale( float depth, uint8 detailIdx );
+		/**
+		@param radius
+			Value in range [2; 64] must be even
+		@param detailIdx
+			Value in range [1; 2]
+		*/
+		void setHeightMapToNormalMapRadius( uint8 radius, uint8 detailIdx );
 
 		virtual void passPreExecute( CompositorPass *pass );
+		virtual void passPosExecute( CompositorPass *pass );
 
 		TextureGpu *getNormalMap() const { return m_normalMap; }
 	};

@@ -4,10 +4,12 @@ compositor_node Yangen/Node
 	in 1 normal_map
 
 	texture blurredHeight1		target_width target_height 1 2d_array target_format uav
+	texture blurredHeight2		target_width target_height 1 2d_array target_format uav
 	texture tmpGaussianFilter	target_width target_height 1 2d_array target_format uav
 
 	texture tmpNormalMap0 target_width target_height PFG_RGBA32_FLOAT uav
 	texture tmpNormalMap1 target_width target_height PFG_RGBA32_FLOAT uav
+	texture tmpNormalMap2 target_width target_height PFG_RGBA32_FLOAT uav
 
 	target normal_map
 	{
@@ -16,6 +18,8 @@ compositor_node Yangen/Node
 			job Yangen/GaussianBlurH
 			input 0 height_map
 			uav 0 tmpGaussianFilter write
+
+			identifier 21
 		}
 
 		pass compute
@@ -23,6 +27,25 @@ compositor_node Yangen/Node
 			job Yangen/GaussianBlurV
 			input 0 tmpGaussianFilter
 			uav 0 blurredHeight1 write
+
+		}
+
+		pass compute
+		{
+			job Yangen/GaussianBlurH
+			input 0 height_map
+			uav 0 tmpGaussianFilter write
+
+			identifier 22
+		}
+
+		pass compute
+		{
+			job Yangen/GaussianBlurV
+			input 0 tmpGaussianFilter
+			uav 0 blurredHeight2 write
+
+			identifier 32
 		}
 
 		pass compute
@@ -45,9 +68,19 @@ compositor_node Yangen/Node
 
 		pass compute
 		{
+			job Yangen/HeightToNormalMap
+			input	0	blurredHeight2
+			uav		0	tmpNormalMap2 write
+
+			identifier 12
+		}
+
+		pass compute
+		{
 			job Yangen/MergeNormalMaps
 			input	0	tmpNormalMap0
 			input	1	tmpNormalMap1
+			input	2	tmpNormalMap2
 
 			uav		0	normal_map write
 		}

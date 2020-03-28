@@ -11,11 +11,17 @@ class wxTextCtrl;
 
 struct ConversionBase
 {
-	wxSlider	*m_slider;
-	wxTextCtrl	*m_textCtrl;
+	wxSlider *  m_slider;
+	wxTextCtrl *m_textCtrl;
 
-	ConversionBase( wxSlider *slider, wxTextCtrl *textCtrl ) :
-		m_slider( slider ), m_textCtrl( textCtrl ) {}
+	bool m_isInteger;
+
+	ConversionBase( wxSlider *slider, wxTextCtrl *textCtrl, bool isInteger ) :
+		m_slider( slider ),
+		m_textCtrl( textCtrl ),
+		m_isInteger( isInteger )
+	{
+	}
 	virtual ~ConversionBase() {}
 
 	virtual void toSlider() = 0;
@@ -24,7 +30,7 @@ struct ConversionBase
 
 struct ConvertUnit : public ConversionBase
 {
-	ConvertUnit( wxSlider *slider, wxTextCtrl *textCtrl );
+	ConvertUnit( wxSlider *slider, wxTextCtrl *textCtrl, bool isInteger = false );
 	virtual void toSlider();
 	virtual void toTextCtrl();
 };
@@ -33,7 +39,8 @@ struct ConvertScaled : public ConversionBase
 	float m_minValue;
 	float m_maxValue;
 
-	ConvertScaled( wxSlider *slider, wxTextCtrl *textCtrl, float minValue, float maxValue );
+	ConvertScaled( wxSlider *slider, wxTextCtrl *textCtrl, float minValue, float maxValue,
+				   bool isInteger = false );
 	virtual void toSlider();
 	virtual void toTextCtrl();
 };
