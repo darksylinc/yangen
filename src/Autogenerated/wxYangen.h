@@ -21,7 +21,6 @@
 #include <wx/menu.h>
 #include <wx/frame.h>
 #include <wx/button.h>
-#include <wx/choice.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/slider.h>
@@ -29,6 +28,7 @@
 #include <wx/statbox.h>
 #include <wx/scrolwin.h>
 #include <wx/panel.h>
+#include <wx/choice.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -73,7 +73,6 @@ class TexturePanel : public wxPanel
 		wxScrolledWindow* m_scrolledWindow2;
 		wxBoxSizer* m_bSizer2;
 		wxButton* m_button7;
-		wxChoice* m_choice1;
 		wxStaticText* m_staticText7;
 		wxSlider* m_normalMapDepth0Slider;
 		wxTextCtrl* m_normalMapDepth0TextCtrl;
@@ -108,6 +107,27 @@ class TexturePanel : public wxPanel
 
 		TexturePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 444,771 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
 		~TexturePanel();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class VisualizationPanel
+///////////////////////////////////////////////////////////////////////////////
+class VisualizationPanel : public wxPanel
+{
+	private:
+
+	protected:
+		wxChoice* m_visualizationChoice;
+
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnChoice( wxCommandEvent& event ) { event.Skip(); }
+
+
+	public:
+
+		VisualizationPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
+		~VisualizationPanel();
 
 };
 

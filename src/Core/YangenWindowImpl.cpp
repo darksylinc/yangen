@@ -8,6 +8,7 @@
 
 #include "Constants.h"
 #include "Core/TexturePanelImpl.h"
+#include "Core/VisualizationPanelImpl.h"
 
 #include "Core/CameraController.h"
 #include "Core/wxOgreRenderWindow.h"
@@ -60,6 +61,7 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 	m_wxOgreRenderWindow( 0 ),
 	m_mainNotebook( 0 ),
 	m_texturePanelImpl( 0 ),
+	m_visualizationPanelImpl( 0 ),
 	m_wasLeftPressed( false ),
 	m_wasRightPressed( false ),
 	m_mouseX( 0 ),
@@ -152,8 +154,11 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 										wxAUI_NB_BOTTOM | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE |
 											wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_TAB_EXTERNAL_MOVE );
 	m_texturePanelImpl = new TexturePanelImpl( this, m_yangenManager );
+	m_visualizationPanelImpl = new VisualizationPanelImpl( this );
 
 	m_mainNotebook->AddPage( m_texturePanelImpl, wxT( "Normal Map" ) );
+	m_mainNotebook->AddPage( m_visualizationPanelImpl, wxT( "Visualization" ) );
+
 	m_wxAuiManager->AddPane( m_mainNotebook, wxAuiPaneInfo()
 												 .Name( wxT( "TabsPane" ) )
 												 .Caption( wxT( "Tabs" ) )
@@ -557,6 +562,25 @@ void YangenWindowImpl::createLogWindow( bool bShow )
 			logPane.Show();
 			m_wxAuiManager->Update();
 		}
+	}
+}
+//-----------------------------------------------------------------------------
+/**
+@brief YangenWindowImpl::setVisualizationMode
+	Applies the datablock to the currently loaded items
+	based on requested visualization mode
+@param visualizationMode
+	See YangenVisualizationModes::YangenVisualizationModes
+*/
+void YangenWindowImpl::setVisualizationMode( uint8_t visualizationMode )
+{
+	assert( visualizationMode < Ogre::YangenVisualizationModes::NumYangenVisualizationModes );
+
+	if( m_previewItem )
+	{
+		m_previewItem->setDatablock( m_materialSwitcher->getDatablock(
+			static_cast<Ogre::YangenVisualizationModes::YangenVisualizationModes>(
+				visualizationMode ) ) );
 	}
 }
 

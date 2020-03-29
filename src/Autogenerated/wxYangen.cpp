@@ -64,12 +64,6 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_button7 = new wxButton( m_scrolledWindow2, wxID_ANY, wxT("Open File"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_button7, 0, wxALL, 5 );
 
-	wxString m_choice1Choices[] = { wxT("Final Render"), wxT("Normal Map") };
-	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
-	m_choice1 = new wxChoice( m_scrolledWindow2, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
-	m_choice1->SetSelection( 0 );
-	bSizer7->Add( m_choice1, 0, wxALL, 5 );
-
 
 	m_bSizer2->Add( bSizer7, 0, 0, 5 );
 
@@ -470,5 +464,31 @@ TexturePanel::~TexturePanel()
 	m_normalMapSteepness2Slider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapSteepness2Slider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapSteepness2TextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+
+}
+
+VisualizationPanel::VisualizationPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
+{
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxVERTICAL );
+
+	wxString m_visualizationChoiceChoices[] = { wxT("Final Render"), wxT("Normal Map") };
+	int m_visualizationChoiceNChoices = sizeof( m_visualizationChoiceChoices ) / sizeof( wxString );
+	m_visualizationChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_visualizationChoiceNChoices, m_visualizationChoiceChoices, 0 );
+	m_visualizationChoice->SetSelection( 0 );
+	bSizer12->Add( m_visualizationChoice, 0, wxALL, 5 );
+
+
+	this->SetSizer( bSizer12 );
+	this->Layout();
+
+	// Connect Events
+	m_visualizationChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( VisualizationPanel::OnChoice ), NULL, this );
+}
+
+VisualizationPanel::~VisualizationPanel()
+{
+	// Disconnect Events
+	m_visualizationChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( VisualizationPanel::OnChoice ), NULL, this );
 
 }
