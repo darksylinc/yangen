@@ -108,6 +108,7 @@ namespace Ogre
 		m_heightMap->waitForMetadata();
 
 		m_normalMap->copyParametersFrom( m_heightMap );
+		m_normalMap->setTextureType( TextureTypes::Type2DArray );
 		m_normalMap->setPixelFormat( PFG_RGBA8_SNORM );
 		m_normalMap->setNumMipmaps( 1u );
 
@@ -171,6 +172,9 @@ namespace Ogre
 			heightmapToNormalParams.heightMapResolution[1] = m_heightMap->getHeight();
 			heightmapToNormalParams.heightMapArrayIdx = m_heightMap->getInternalSliceStart();
 			heightmapToNormalParams.depthScale = m_heightMapToNormalMapStrength[i];
+
+			if( i > 0u )
+				heightmapToNormalParams.depthScale *= m_heightMapToNormalMapBlurRadius[i - 1u];
 
 			m_heightmapToNormalParams[i]->upload( &heightmapToNormalParams, 0u,
 												  sizeof( heightmapToNormalParams ) );

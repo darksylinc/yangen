@@ -3,9 +3,10 @@ compositor_node Yangen/Node
 	in 0 height_map
 	in 1 normal_map
 
-	texture blurredHeight1		target_width target_height 1 2d_array target_format uav
-	texture blurredHeight2		target_width target_height 1 2d_array target_format uav
-	texture tmpGaussianFilter	target_width target_height 1 2d_array target_format uav
+	// We need higher precision for the blur otherwise artifacts appear for extreme settings
+	texture blurredHeight1		target_width target_height 1 2d_array PFG_RGBA16_UNORM uav
+	texture blurredHeight2		target_width target_height 1 2d_array PFG_RGBA16_UNORM uav
+	texture tmpGaussianFilter	target_width target_height 1 2d_array PFG_RGBA16_UNORM uav
 
 	texture tmpNormalMap0 target_width target_height PFG_RGBA32_FLOAT uav
 	texture tmpNormalMap1 target_width target_height PFG_RGBA32_FLOAT uav

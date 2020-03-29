@@ -28,6 +28,7 @@
 #include "Compositor/OgreCompositorManager2.h"
 #include "Compositor/OgreCompositorWorkspace.h"
 
+#include "OgreHlmsCompute.h"
 #include "OgreHlmsPbs.h"
 #include "OgreHlmsUnlit.h"
 
@@ -313,7 +314,7 @@ void YangenWindowImpl::createSystems()
 	lightNode->attachObject( sunLight );
 	sunLight->setPowerScale( Ogre::Math::PI );
 	sunLight->setType( Ogre::Light::LT_DIRECTIONAL );
-	sunLight->setDirection( Ogre::Vector3( -1, -0.2, -1 ).normalisedCopy() );
+	sunLight->setDirection( Ogre::Vector3( -1, -1.2, -0.1 ).normalisedCopy() );
 
 	loadResources();
 
@@ -345,7 +346,7 @@ void YangenWindowImpl::createSystems()
 		m_yangenManager->process();
 
 		m_previewItem->setDatablock(
-			m_materialSwitcher->getDatablock( Ogre::YangenVisualizationModes::Normal ) );
+			m_materialSwitcher->getDatablock( Ogre::YangenVisualizationModes::FinalRender ) );
 	}
 	catch( Ogre::Exception &e )
 	{
@@ -743,6 +744,8 @@ void YangenWindowImpl::createPlaneMesh()
 	Ogre::MeshPtr planeMesh = Ogre::MeshManager::getSingleton().createManual(
 		"Plane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
 
+	planeMeshV1->buildTangentVectors( Ogre::VES_TANGENT, 0, 0, true, true, true );
+
 	planeMesh->importV1( planeMeshV1.get(), true, true, true );
 
 	Ogre::v1::MeshManager::getSingleton().remove( planeMeshV1 );
@@ -833,9 +836,10 @@ void YangenWindowImpl::OnMenuSelection( wxCommandEvent &event )
 	{
 		Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
 
-		Ogre::Hlms *hlms = hlmsManager->getHlms( Ogre::HLMS_USER3 );
+		// Ogre::Hlms *hlms = hlmsManager->getHlms( Ogre::HLMS_USER3 );
 		Ogre::GpuProgramManager::getSingleton().clearMicrocodeCache();
-		hlms->reloadFrom( hlms->getDataFolder() );
+		// hlms->reloadFrom( hlms->getDataFolder() );
+		hlmsManager->getComputeHlms()->reloadFrom( 0, 0 );
 	}
 	break;
 	default:

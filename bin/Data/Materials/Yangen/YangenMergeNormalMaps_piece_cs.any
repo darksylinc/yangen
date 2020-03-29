@@ -44,6 +44,16 @@ void body( uint3 gl_GlobalInvocationID )
 	finalNormal = rnmBlend( nm2, nm1 );
 	finalNormal = rnmBlend( finalNormal, nm0 );
 
+	if( finalNormal.z < 0 )
+	{
+		finalNormal.z = 0;
+		if( finalNormal.x == 0 && finalNormal.y == 0 )
+			finalNormal.z = 1.0;
+		finalNormal = normalize( finalNormal );
+		finalNormal = lerp( finalNormal, nm1, 0.9f );
+		finalNormal = normalize( finalNormal );
+	}
+
 	OGRE_imageWrite2DArray4( outNormalMap, uint3( iuv, 0u ), float4( finalNormal, 1.0f ) );
 
 	// @end
