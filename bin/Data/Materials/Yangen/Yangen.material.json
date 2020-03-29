@@ -38,6 +38,11 @@
                 {}
             ],
 
+            "params":
+            [
+                ["steepness",		[1.0, 1.0, 1.0, 1.0], "float"]
+            ],
+
             "params_glsl":
             [
                 ["normalMap0",		[0], "int"],

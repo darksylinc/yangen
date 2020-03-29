@@ -9,6 +9,10 @@ uniform sampler2D normalMap0;
 uniform sampler2D normalMap1;
 uniform sampler2D normalMap2;
 
+uniform float4 steepness;
+
+#define p_steepness steepness
+
 layout( local_size_x = @value( threads_per_group_x ),
 		local_size_y = @value( threads_per_group_y ),
 		local_size_z = @value( threads_per_group_z ) ) in;

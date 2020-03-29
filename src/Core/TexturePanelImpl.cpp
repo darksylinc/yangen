@@ -36,6 +36,13 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapRadius2Slider, m_normalMapRadius2TextCtrl, 2.0f, 64.0f, true ) );
 
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_normalMapSteepness0Slider, m_normalMapSteepness0TextCtrl, -10.0f, 10.0f ) );
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_normalMapSteepness1Slider, m_normalMapSteepness1TextCtrl, -10.0f, 10.0f ) );
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_normalMapSteepness2Slider, m_normalMapSteepness2TextCtrl, -10.0f, 10.0f ) );
+
 	mInitializing = false;
 }
 //-----------------------------------------------------------------------------
@@ -174,38 +181,50 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 	if( mInitializing )
 		return;
 
-	if( textCtrl == m_normalMapDepth0TextCtrl )
+	const size_t c_numStrengthTextCtrls = 3u;
+	wxTextCtrl *nmStrengthTextCtrls[c_numStrengthTextCtrls] = { m_normalMapDepth0TextCtrl,
+																m_normalMapDepth1TextCtrl,
+																m_normalMapDepth2TextCtrl };
+
+	const size_t c_numNmRadiusTextCtrls = 2u;
+	wxTextCtrl *nmRadiusTextCtrls[c_numNmRadiusTextCtrls] = { m_normalMapRadius1TextCtrl,
+															  m_normalMapRadius2TextCtrl };
+
+	const size_t c_numSteepnessTextCtrls = 3u;
+	wxTextCtrl *steepnessTextCtrls[c_numSteepnessTextCtrls] = { m_normalMapSteepness0TextCtrl,
+																m_normalMapSteepness1TextCtrl,
+																m_normalMapSteepness2TextCtrl };
+
+	for( uint8_t i = 0u; i < c_numStrengthTextCtrls; ++i )
 	{
-		m_yangenManager->setHeightMapToNormalMapDepthScale(
-			getValueFrom( m_normalMapDepth0TextCtrl, 1.0f ), 0u );
-		m_yangenManager->process();
+		if( textCtrl == nmStrengthTextCtrls[i] )
+		{
+			m_yangenManager->setHeightMapToNormalMapStrength( getValueFrom( textCtrl, 1.0f ), i );
+			m_yangenManager->process();
+			return;
+		}
 	}
-	else if( textCtrl == m_normalMapDepth1TextCtrl )
+
+	for( uint8_t i = 0u; i < c_numNmRadiusTextCtrls; ++i )
 	{
-		m_yangenManager->setHeightMapToNormalMapDepthScale(
-			getValueFrom( m_normalMapDepth1TextCtrl, 1.0f ), 1u );
-		m_yangenManager->process();
+		if( textCtrl == nmRadiusTextCtrls[i] )
+		{
+			uint8_t radius = static_cast<uint8_t>( getValueFrom( textCtrl, 2.0f ) );
+			if( radius & 0x01u )
+				radius = radius + 1u;
+			m_yangenManager->setHeightMapToNormalMapRadius( radius, i + 1u );
+			m_yangenManager->process();
+			return;
+		}
 	}
-	else if( textCtrl == m_normalMapDepth2TextCtrl )
+
+	for( uint8_t i = 0u; i < c_numSteepnessTextCtrls; ++i )
 	{
-		m_yangenManager->setHeightMapToNormalMapDepthScale(
-			getValueFrom( m_normalMapDepth2TextCtrl, 1.0f ), 2u );
-		m_yangenManager->process();
-	}
-	else if( textCtrl == m_normalMapRadius1TextCtrl )
-	{
-		uint8_t radius = static_cast<uint8_t>( getValueFrom( m_normalMapRadius1TextCtrl, 2.0f ) );
-		if( radius & 0x01u )
-			radius = radius + 1u;
-		m_yangenManager->setHeightMapToNormalMapRadius( radius, 1u );
-		m_yangenManager->process();
-	}
-	else if( textCtrl == m_normalMapRadius2TextCtrl )
-	{
-		uint8_t radius = static_cast<uint8_t>( getValueFrom( m_normalMapRadius2TextCtrl, 2.0f ) );
-		if( radius & 0x01u )
-			radius = radius + 1u;
-		m_yangenManager->setHeightMapToNormalMapRadius( radius, 2u );
-		m_yangenManager->process();
+		if( textCtrl == steepnessTextCtrls[i] )
+		{
+			m_yangenManager->setNormalMapSteepness( getValueFrom( textCtrl, 0.0f ), i );
+			m_yangenManager->process();
+			return;
+		}
 	}
 }

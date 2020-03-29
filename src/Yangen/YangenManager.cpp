@@ -39,14 +39,23 @@ namespace Ogre
 		m_textureGpuManager( textureGpuManager ),
 		m_sceneManager( sceneManager ),
 		m_dummyCamera( 0 ),
+		m_heightmapToNormalJob( 0 ),
+		m_mergeNormalMapsJob( 0 ),
+		m_mergeNormalMapsParams( 0 ),
+		m_mergeNormalMapsSteepness( 0 ),
 		m_defaultGenerateAllConstantDefinitionArrayEntries( false )
 	{
-		m_heightMapToNormalMapDepthScale[0] = 0.5f;
-		m_heightMapToNormalMapDepthScale[1] = 20.0f;
-		m_heightMapToNormalMapDepthScale[2] = 0.0f;
+		m_heightMapToNormalMapStrength[0] = 0.5f;
+		m_heightMapToNormalMapStrength[1] = 20.0f;
+		m_heightMapToNormalMapStrength[2] = 0.0f;
 
 		m_heightMapToNormalMapBlurRadius[0] = 8u;
 		m_heightMapToNormalMapBlurRadius[1] = 32u;
+
+		const size_t numSteepnessParams =
+			sizeof( m_normalMapSteepness ) / sizeof( m_normalMapSteepness[0] );
+		for( size_t i = 0u; i < numSteepnessParams; ++i )
+			m_normalMapSteepness[i] = 0.0f;
 
 		const size_t numParams =
 			sizeof( m_heightmapToNormalParams ) / sizeof( m_heightmapToNormalParams[0] );
@@ -55,6 +64,11 @@ namespace Ogre
 
 		m_heightmapToNormalJob =
 			hlmsManager->getComputeHlms()->findComputeJob( "Yangen/HeightToNormalMap" );
+
+		m_mergeNormalMapsJob = hlmsManager->getComputeHlms()->findComputeJob( "Yangen/MergeNormalMaps" );
+
+		m_mergeNormalMapsParams = &m_mergeNormalMapsJob->getShaderParams( "default" );
+		m_mergeNormalMapsSteepness = m_mergeNormalMapsParams->findParameter( "steepness" );
 	};
 	//-------------------------------------------------------------------------
 	YangenManager::~YangenManager() { unloadTextures(); }
@@ -156,12 +170,26 @@ namespace Ogre
 			heightmapToNormalParams.heightMapResolution[0] = m_heightMap->getWidth();
 			heightmapToNormalParams.heightMapResolution[1] = m_heightMap->getHeight();
 			heightmapToNormalParams.heightMapArrayIdx = m_heightMap->getInternalSliceStart();
-			heightmapToNormalParams.depthScale = m_heightMapToNormalMapDepthScale[i];
+			heightmapToNormalParams.depthScale = m_heightMapToNormalMapStrength[i];
 
 			m_heightmapToNormalParams[i]->upload( &heightmapToNormalParams, 0u,
 												  sizeof( heightmapToNormalParams ) );
 		}
 		m_heightmapToNormalJob->setConstBuffer( 0u, m_heightmapToNormalParams[0] );
+
+		const size_t numSteepnessParams =
+			sizeof( m_normalMapSteepness ) / sizeof( m_normalMapSteepness[0] );
+		float steepnessVal[numSteepnessParams];
+		for( size_t i = 0u; i < numSteepnessParams; ++i )
+		{
+			if( m_normalMapSteepness[i] >= 0.0f )
+				steepnessVal[i] = m_normalMapSteepness[i] + 1.0f;
+			else
+				steepnessVal[i] = -1.0f / ( m_normalMapSteepness[i] - 1.0f );
+		}
+
+		m_mergeNormalMapsSteepness->setManualValue( steepnessVal, numSteepnessParams );
+		m_mergeNormalMapsParams->setDirty();
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::setGaussianFilterParams( Ogre::HlmsComputeJob *job, Ogre::uint8 kernelRadius,
@@ -259,10 +287,10 @@ namespace Ogre
 		m_workspace->_endUpdate( false );
 	}
 	//-------------------------------------------------------------------------
-	void YangenManager::setHeightMapToNormalMapDepthScale( float depth, uint8 detailIdx )
+	void YangenManager::setHeightMapToNormalMapStrength( float strength, uint8 detailIdx )
 	{
 		assert( detailIdx < 3u );
-		m_heightMapToNormalMapDepthScale[detailIdx] = depth;
+		m_heightMapToNormalMapStrength[detailIdx] = strength;
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::setHeightMapToNormalMapRadius( uint8 radius, uint8 detailIdx )
@@ -271,6 +299,12 @@ namespace Ogre
 		assert( radius > 1u && radius <= 65u );
 		assert( !( radius & 0x01u ) && "Radius must be even!" );
 		m_heightMapToNormalMapBlurRadius[detailIdx - 1u] = radius;
+	}
+	//-------------------------------------------------------------------------
+	void YangenManager::setNormalMapSteepness( float steepness, uint8 detailIdx )
+	{
+		assert( detailIdx < 3u );
+		m_normalMapSteepness[detailIdx] = steepness;
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::passPreExecute( CompositorPass *pass )

@@ -14,9 +14,14 @@ void header()
 	{
 		float3 t = normalBase.xyz + float3( 0.0f, 0.0f, 1.0f );
 		float3 u = normalDetail.xyz * float3( -1.0f, -1.0f, 1.0f );
-		//t.z += 0.0001; // We know normalBase.z is never negative so this isn't needed
+		// t.z += 0.0001; // We know normalBase.z is never negative so this isn't needed
 		float3 r = t * dot( t, u ) / t.z - u;
 		return normalize( r );
+	}
+
+	INLINE float3 pow3( float3 value, float exp )
+	{
+		return float3( pow( value.x, exp ), pow( value.y, exp ), pow( value.z, exp ) );
 	}
 	// @end
 }
@@ -30,6 +35,10 @@ void body( uint3 gl_GlobalInvocationID )
 	float3 nm0 = OGRE_Load2D( normalMap0, iuv, 0 ).xyz;
 	float3 nm1 = OGRE_Load2D( normalMap1, iuv, 0 ).xyz;
 	float3 nm2 = OGRE_Load2D( normalMap2, iuv, 0 ).xyz;
+
+	nm0 = pow3( abs( nm0 ), p_steepness.x ) * sign( nm0 );
+	nm1 = pow3( abs( nm1 ), p_steepness.y ) * sign( nm1 );
+	nm2 = pow3( abs( nm2 ), p_steepness.z ) * sign( nm2 );
 
 	float3 finalNormal;
 	finalNormal = rnmBlend( nm2, nm1 );
