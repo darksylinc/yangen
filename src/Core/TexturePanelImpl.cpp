@@ -43,6 +43,19 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapSteepness2Slider, m_normalMapSteepness2TextCtrl, -10.0f, 10.0f ) );
 
+	mapSliderAndTextCtrl( new ConvertScaled( m_roughnessBlurOffsetSlider, m_roughnessBlurOffsetTextCtrl,
+											 0.0f, 32.0f, true ) );
+	mapSliderAndTextCtrl( new ConvertScaled( m_roughnessBlurAmplitudeSlider,
+											 m_roughnessBlurAmplitudeTextCtrl, 0.0f, 32.0f ),
+						  true );
+
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_roughnessMidpointSlider, m_roughnessMidpointTextCtrl, -0.5f, 1.5f ) );
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_roughnessScaleSlider, m_roughnessScaleTextCtrl, -4.0f, 4.0f ) );
+	mapSliderAndTextCtrl(
+		new ConvertScaled( m_roughnessExponentSlider, m_roughnessExponentTextCtrl, 0.0f, 2.0f ) );
+
 	mInitializing = false;
 }
 //-----------------------------------------------------------------------------
@@ -226,5 +239,42 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 			m_yangenManager->process();
 			return;
 		}
+	}
+
+	if( textCtrl == m_roughnessBlurOffsetTextCtrl )
+	{
+		uint8_t offset = static_cast<uint8_t>( getValueFrom( textCtrl, 2.0f ) );
+		if( offset & 0x01u )
+			offset = offset + 1u;
+		m_yangenManager->setRoughnessBlurOffset( offset );
+		m_yangenManager->process();
+		return;
+	}
+	if( textCtrl == m_roughnessBlurAmplitudeTextCtrl )
+	{
+		uint8_t amplitude = static_cast<uint8_t>( getValueFrom( textCtrl, 2.0f ) );
+		if( amplitude & 0x01u )
+			amplitude = amplitude + 1u;
+		m_yangenManager->setRoughnessBlurAmplitude( amplitude );
+		m_yangenManager->process();
+		return;
+	}
+	if( textCtrl == m_roughnessMidpointTextCtrl )
+	{
+		m_yangenManager->setRoughnessMidpoint( getValueFrom( textCtrl, 0.0f ) );
+		m_yangenManager->process();
+		return;
+	}
+	if( textCtrl == m_roughnessScaleTextCtrl )
+	{
+		m_yangenManager->setRoughnessScale( getValueFrom( textCtrl, 1.0f ) );
+		m_yangenManager->process();
+		return;
+	}
+	if( textCtrl == m_roughnessExponentTextCtrl )
+	{
+		m_yangenManager->setRoughnessExponent( getValueFrom( textCtrl, 1.0f ) );
+		m_yangenManager->process();
+		return;
 	}
 }

@@ -97,6 +97,21 @@ class TexturePanel : public wxPanel
 		wxStaticText* m_staticText7311;
 		wxSlider* m_normalMapSteepness2Slider;
 		wxTextCtrl* m_normalMapSteepness2TextCtrl;
+		wxStaticText* m_staticText7111;
+		wxSlider* m_roughnessBlurOffsetSlider;
+		wxTextCtrl* m_roughnessBlurOffsetTextCtrl;
+		wxStaticText* m_staticText7211;
+		wxSlider* m_roughnessBlurAmplitudeSlider;
+		wxTextCtrl* m_roughnessBlurAmplitudeTextCtrl;
+		wxStaticText* m_staticText73111;
+		wxSlider* m_roughnessMidpointSlider;
+		wxTextCtrl* m_roughnessMidpointTextCtrl;
+		wxStaticText* m_staticText731111;
+		wxSlider* m_roughnessScaleSlider;
+		wxTextCtrl* m_roughnessScaleTextCtrl;
+		wxStaticText* m_staticText7311111;
+		wxSlider* m_roughnessExponentSlider;
+		wxTextCtrl* m_roughnessExponentTextCtrl;
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnScroll( wxScrollEvent& event ) { event.Skip(); }

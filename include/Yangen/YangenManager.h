@@ -108,6 +108,21 @@ namespace Ogre
 		 */
 		void setNormalMapSteepness( float steepness, uint8 detailIdx );
 
+		void  setRoughnessMidpoint( float midpoint );
+		float getRoughnessMidpoint() const;
+
+		void  setRoughnessScale( float scale );
+		float getRoughnessScale() const;
+
+		void  setRoughnessExponent( float exponent );
+		float getRoughnessExponent() const;
+
+		void  setRoughnessBlurOffset( uint8 offset );
+		uint8 getRoughnessBlurOffset() const;
+
+		void  setRoughnessBlurAmplitude( uint8 amplitude );
+		uint8 getRoughnessBlurAmplitude() const;
+
 		virtual void passPreExecute( CompositorPass *pass );
 		virtual void passPosExecute( CompositorPass *pass );
 

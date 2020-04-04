@@ -286,7 +286,138 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	Large->Add( fgSizer7, 1, wxEXPAND, 5 );
 
 
-	m_bSizer2->Add( Large, 1, wxEXPAND, 5 );
+	m_bSizer2->Add( Large, 0, wxEXPAND, 5 );
+
+
+	m_bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxStaticBoxSizer* sbSizer4;
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_scrolledWindow2, wxID_ANY, wxT("Roughness Map") ), wxVERTICAL );
+
+	wxFlexGridSizer* fgSizer71;
+	fgSizer71 = new wxFlexGridSizer( 0, 3, 0, 0 );
+	fgSizer71->AddGrowableCol( 1 );
+	fgSizer71->SetFlexibleDirection( wxBOTH );
+	fgSizer71->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxBoxSizer* bSizer15111;
+	bSizer15111 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer15111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText7111 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Blur Offset"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7111->Wrap( -1 );
+	bSizer15111->Add( m_staticText7111, 0, wxALL, 5 );
+
+
+	bSizer15111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer71->Add( bSizer15111, 1, wxEXPAND, 5 );
+
+	m_roughnessBlurOffsetSlider = new wxSlider( sbSizer4->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer71->Add( m_roughnessBlurOffsetSlider, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_roughnessBlurOffsetTextCtrl = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer71->Add( m_roughnessBlurOffsetTextCtrl, 0, wxALL, 5 );
+
+	wxBoxSizer* bSizer15211;
+	bSizer15211 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer15211->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText7211 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Blur Amplitude"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7211->Wrap( -1 );
+	bSizer15211->Add( m_staticText7211, 0, wxALL, 5 );
+
+
+	bSizer15211->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer71->Add( bSizer15211, 1, wxEXPAND, 5 );
+
+	m_roughnessBlurAmplitudeSlider = new wxSlider( sbSizer4->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer71->Add( m_roughnessBlurAmplitudeSlider, 1, wxALL|wxEXPAND, 5 );
+
+	m_roughnessBlurAmplitudeTextCtrl = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer71->Add( m_roughnessBlurAmplitudeTextCtrl, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer153111;
+	bSizer153111 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer153111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText73111 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Midpoint"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText73111->Wrap( -1 );
+	bSizer153111->Add( m_staticText73111, 0, wxALL, 5 );
+
+
+	bSizer153111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer71->Add( bSizer153111, 1, wxEXPAND, 5 );
+
+	m_roughnessMidpointSlider = new wxSlider( sbSizer4->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer71->Add( m_roughnessMidpointSlider, 1, wxALL|wxEXPAND, 5 );
+
+	m_roughnessMidpointTextCtrl = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer71->Add( m_roughnessMidpointTextCtrl, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer1531111;
+	bSizer1531111 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer1531111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText731111 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Scale"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText731111->Wrap( -1 );
+	bSizer1531111->Add( m_staticText731111, 0, wxALL, 5 );
+
+
+	bSizer1531111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer71->Add( bSizer1531111, 1, wxEXPAND, 5 );
+
+	m_roughnessScaleSlider = new wxSlider( sbSizer4->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer71->Add( m_roughnessScaleSlider, 1, wxALL|wxEXPAND, 5 );
+
+	m_roughnessScaleTextCtrl = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer71->Add( m_roughnessScaleTextCtrl, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer15311111;
+	bSizer15311111 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer15311111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText7311111 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Exponent"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7311111->Wrap( -1 );
+	bSizer15311111->Add( m_staticText7311111, 0, wxALL, 5 );
+
+
+	bSizer15311111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer71->Add( bSizer15311111, 1, wxEXPAND, 5 );
+
+	m_roughnessExponentSlider = new wxSlider( sbSizer4->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer71->Add( m_roughnessExponentSlider, 1, wxALL|wxEXPAND, 5 );
+
+	m_roughnessExponentTextCtrl = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer71->Add( m_roughnessExponentTextCtrl, 1, wxALL|wxEXPAND, 5 );
+
+
+	sbSizer4->Add( fgSizer71, 1, wxEXPAND, 5 );
+
+
+	m_bSizer2->Add( sbSizer4, 0, wxEXPAND, 5 );
+
+
+	m_bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 
 
 	m_scrolledWindow2->SetSizer( m_bSizer2 );
@@ -379,6 +510,56 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_normalMapSteepness2Slider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapSteepness2Slider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapSteepness2TextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
 }
 
 TexturePanel::~TexturePanel()
@@ -464,6 +645,56 @@ TexturePanel::~TexturePanel()
 	m_normalMapSteepness2Slider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapSteepness2Slider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_normalMapSteepness2TextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurOffsetTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessBlurAmplitudeTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessMidpointTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessScaleTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_roughnessExponentTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
 
 }
 

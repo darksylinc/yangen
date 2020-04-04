@@ -383,6 +383,35 @@ namespace Ogre
 		m_normalMapSteepness[detailIdx] = steepness;
 	}
 	//-------------------------------------------------------------------------
+	void YangenManager::setRoughnessMidpoint( float midpoint )
+	{
+		m_diffuseToRoughnessMidpoint = midpoint;
+	}
+	//-------------------------------------------------------------------------
+	float YangenManager::getRoughnessMidpoint() const { return m_diffuseToRoughnessMidpoint; }
+	//-------------------------------------------------------------------------
+	void YangenManager::setRoughnessScale( float scale ) { m_diffuseToRoughnessScale = scale; }
+	//-------------------------------------------------------------------------
+	float YangenManager::getRoughnessScale() const { return m_diffuseToRoughnessScale; }
+	//-------------------------------------------------------------------------
+	void YangenManager::setRoughnessExponent( float exponent )
+	{
+		m_diffuseToRoughnessExponent = exponent;
+	}
+	//-------------------------------------------------------------------------
+	float YangenManager::getRoughnessExponent() const { return m_diffuseToRoughnessExponent; }
+	//-------------------------------------------------------------------------
+	void YangenManager::setRoughnessBlurOffset( uint8 offset ) { m_roughnessBlurOffset = offset; }
+	//-------------------------------------------------------------------------
+	uint8 YangenManager::getRoughnessBlurOffset() const { return m_roughnessBlurOffset; }
+	//-------------------------------------------------------------------------
+	void YangenManager::setRoughnessBlurAmplitude( uint8 amplitude )
+	{
+		m_roughnessBlurAmplitude = amplitude;
+	}
+	//-------------------------------------------------------------------------
+	uint8 YangenManager::getRoughnessBlurAmplitude() const { return m_roughnessBlurAmplitude; }
+	//-------------------------------------------------------------------------
 	void YangenManager::passPreExecute( CompositorPass *pass )
 	{
 		const uint32 identifier = pass->getDefinition()->mIdentifier;
