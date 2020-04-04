@@ -30,13 +30,12 @@ namespace Ogre
 	struct DiffuseToRoughnessParams
 	{
 		uint32 diffuseMapResolution[2];
-		uint32 diffuseMapArrayIdx;
-		uint32 padding0;
+		uint32 padding0[2];
 
 		float midPoint;
 		float scale;
 		float exponent;
-		float padding1;
+		float padding2;
 	};
 
 	YangenManager::YangenManager( const String &texName, HlmsManager *hlmsManager,
@@ -256,13 +255,13 @@ namespace Ogre
 		DiffuseToRoughnessParams diffuseToRoughnessParams;
 		diffuseToRoughnessParams.diffuseMapResolution[0] = m_heightMap->getWidth();
 		diffuseToRoughnessParams.diffuseMapResolution[1] = m_heightMap->getHeight();
-		diffuseToRoughnessParams.diffuseMapArrayIdx = m_heightMap->getInternalSliceStart();
-		diffuseToRoughnessParams.padding0 = 0u;
+		diffuseToRoughnessParams.padding0[0] = 0u;
+		diffuseToRoughnessParams.padding0[1] = 0u;
 
 		diffuseToRoughnessParams.midPoint = m_diffuseToRoughnessMidpoint;
 		diffuseToRoughnessParams.scale = m_diffuseToRoughnessScale;
 		diffuseToRoughnessParams.exponent = m_diffuseToRoughnessExponent;
-		diffuseToRoughnessParams.padding1 = 0.0f;
+		diffuseToRoughnessParams.padding2 = 0.0f;
 		m_diffusemapToRoughnessParams->upload( &diffuseToRoughnessParams, 0u,
 											   sizeof( diffuseToRoughnessParams ) );
 		m_diffusemapToRoughnessJob->setConstBuffer( 0u, m_diffusemapToRoughnessParams );

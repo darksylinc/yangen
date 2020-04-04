@@ -3,15 +3,6 @@
 
 @insertpiece( PreBindingsHeaderCS )
 
-layout (@insertpiece(uav0_pf_type)) uniform restrict writeonly image2DArray outRoughnessMap;
-
-uniform sampler2DArray blurTex0;
-uniform sampler2DArray blurTex1;
-
-layout( local_size_x = @value( threads_per_group_x ),
-		local_size_y = @value( threads_per_group_y ),
-		local_size_z = @value( threads_per_group_z ) ) in;
-
 @insertpiece( HeaderCS )
 
 //in uvec3 gl_NumWorkGroups;
@@ -20,7 +11,16 @@ layout( local_size_x = @value( threads_per_group_x ),
 //in uvec3 gl_GlobalInvocationID;
 //in uint  gl_LocalInvocationIndex;
 
-void main()
+kernel void main_metal
+(
+	uint3 gl_GlobalInvocationID		[[thread_position_in_grid]]
+
+	, texture2d_array<@insertpiece(uav0_pf_type), access::write> outNormalMap [[texture(UAV_SLOT_START+0)]]
+
+	, texture2d<float> heightMapTex			[[texture(0)]]
+
+	, constant HeightmapToNormalParams &p	[[buffer(CONST_SLOT_START+0)]]
+)
 {
 	@insertpiece( BodyCS )
 }

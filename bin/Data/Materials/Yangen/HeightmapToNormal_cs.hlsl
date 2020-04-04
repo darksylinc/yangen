@@ -3,14 +3,9 @@
 
 @insertpiece( PreBindingsHeaderCS )
 
-layout (@insertpiece(uav0_pf_type)) uniform restrict writeonly image2DArray outRoughnessMap;
+RWTexture2DArray<@insertpiece(uav0_pf_type)> outNormalMap : register(u0);
 
-uniform sampler2DArray blurTex0;
-uniform sampler2DArray blurTex1;
-
-layout( local_size_x = @value( threads_per_group_x ),
-		local_size_y = @value( threads_per_group_y ),
-		local_size_z = @value( threads_per_group_z ) ) in;
+Texture2DArray heightMapTex : register(t0);
 
 @insertpiece( HeaderCS )
 
@@ -20,7 +15,11 @@ layout( local_size_x = @value( threads_per_group_x ),
 //in uvec3 gl_GlobalInvocationID;
 //in uint  gl_LocalInvocationIndex;
 
-void main()
+[numthreads(@value( threads_per_group_x ), @value( threads_per_group_y ), @value( threads_per_group_z ))]
+void main
+(
+	uint3 gl_GlobalInvocationID		: SV_DispatchThreadId
+)
 {
 	@insertpiece( BodyCS )
 }

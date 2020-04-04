@@ -143,8 +143,8 @@
 
             "params_glsl" :
             [
-                ["diffuseMapTex",		[0], "int"],
-                ["blurTex0",            [1], "int"],
+                ["blurTex0",            [0], "int"],
+                ["blurTex1",            [1], "int"],
                 ["outRoughnessMap",		[0], "int"]
             ]
         }
