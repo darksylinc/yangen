@@ -35,7 +35,7 @@ void body( uint3 gl_GlobalInvocationID )
 
 	diff = p.midPoint + pow( abs( diff ), p.exponent ) * sign( diff ) * p.scale;
 
-	OGRE_imageWrite2DArray4( outRoughnessMap, uint3( iuv, 0u ), float4( diff, 0.0f, 0.0f, 1.0f ) );
+	OGRE_imageWrite2DArray1( outRoughnessMap, uint3( iuv, 0u ), float4( diff, 0.0f, 0.0f, 1.0f ) );
 
 	// @end
 }

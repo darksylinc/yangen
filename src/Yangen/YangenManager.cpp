@@ -329,7 +329,10 @@ namespace Ogre
 		for( uint32 i = 0; i < kernelRadius + 1u; i += floatsPerParam )
 		{
 			weightsString.clear();
-			weightsString.a( "c_weights[", i, "]" );
+			if( job->getCreator()->getShaderProfile() != "hlsl" )
+				weightsString.a( "c_weights[", i, "]" );
+			else
+				weightsString.a( "c_weights[", ( i >> 2u ), "]" );
 
 			ShaderParams::Param p;
 			p.isAutomatic = false;
