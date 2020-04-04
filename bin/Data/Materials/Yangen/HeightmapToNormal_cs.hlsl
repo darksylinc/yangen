@@ -3,7 +3,7 @@
 
 @insertpiece( PreBindingsHeaderCS )
 
-RWTexture2DArray<@insertpiece(uav0_pf_type)> outNormalMap : register(u0);
+RWTexture2D<@insertpiece(uav0_pf_type)> outNormalMap : register(u0);
 
 Texture2DArray heightMapTex : register(t0);
 

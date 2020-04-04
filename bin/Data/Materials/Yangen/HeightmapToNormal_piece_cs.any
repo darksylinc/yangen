@@ -88,7 +88,7 @@ void body( uint3 gl_GlobalInvocationID )
 
 	// vNormal = vNormal * 0.5f + 0.5f;
 
-	OGRE_imageWrite2DArray4( outNormalMap, uint3( iuv, 0u ), float4( vNormal, 1.0f ) );
+	OGRE_imageWrite2D4( outNormalMap, uint2( iuv ), float4( vNormal, 1.0f ) );
 
 	// @end
 }

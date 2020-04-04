@@ -29,7 +29,6 @@ compositor_node Yangen/Node
 			job Yangen/GaussianBlurV
 			input 0 tmpGaussianFilter
 			uav 0 blurredHeight1 write
-
 		}
 
 		pass compute

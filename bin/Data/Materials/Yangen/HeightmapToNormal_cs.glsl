@@ -3,7 +3,7 @@
 
 @insertpiece( PreBindingsHeaderCS )
 
-layout (@insertpiece(uav0_pf_type)) uniform restrict writeonly image2DArray outNormalMap;
+layout (@insertpiece(uav0_pf_type)) uniform restrict writeonly image2D outNormalMap;
 
 uniform sampler2DArray heightMapTex;
 

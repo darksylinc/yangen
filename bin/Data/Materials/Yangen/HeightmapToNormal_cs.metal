@@ -15,9 +15,9 @@ kernel void main_metal
 (
 	uint3 gl_GlobalInvocationID		[[thread_position_in_grid]]
 
-	, texture2d_array<@insertpiece(uav0_pf_type), access::write> outNormalMap [[texture(UAV_SLOT_START+0)]]
+	, texture2d<@insertpiece(uav0_pf_type), access::write> outNormalMap [[texture(UAV_SLOT_START+0)]]
 
-	, texture2d<float> heightMapTex			[[texture(0)]]
+	, texture2d_array<float> heightMapTex	[[texture(0)]]
 
 	, constant HeightmapToNormalParams &p	[[buffer(CONST_SLOT_START+0)]]
 )
