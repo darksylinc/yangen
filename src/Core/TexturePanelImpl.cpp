@@ -46,8 +46,7 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 	mapSliderAndTextCtrl( new ConvertScaled( m_roughnessBlurOffsetSlider, m_roughnessBlurOffsetTextCtrl,
 											 0.0f, 32.0f, true ) );
 	mapSliderAndTextCtrl( new ConvertScaled( m_roughnessBlurAmplitudeSlider,
-											 m_roughnessBlurAmplitudeTextCtrl, 0.0f, 32.0f ),
-						  true );
+											 m_roughnessBlurAmplitudeTextCtrl, 0.0f, 32.0f, true ) );
 
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_roughnessMidpointSlider, m_roughnessMidpointTextCtrl, -0.5f, 1.5f ) );

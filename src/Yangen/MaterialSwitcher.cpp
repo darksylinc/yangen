@@ -65,6 +65,7 @@ namespace Ogre
 
 		pbsDatablock->setTexture( PBSM_DIFFUSE, m_yangenManager->getDiffuseMap() );
 		pbsDatablock->setTexture( PBSM_NORMAL, m_yangenManager->getNormalMap() );
+		pbsDatablock->setTexture( PBSM_ROUGHNESS, m_yangenManager->getRoughnessMap() );
 
 		Ogre::HlmsUnlitDatablock *unlitDatablock = 0;
 

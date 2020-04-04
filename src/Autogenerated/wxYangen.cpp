@@ -703,7 +703,7 @@ VisualizationPanel::VisualizationPanel( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* bSizer12;
 	bSizer12 = new wxBoxSizer( wxVERTICAL );
 
-	wxString m_visualizationChoiceChoices[] = { wxT("Final Render"), wxT("Normal Map") };
+	wxString m_visualizationChoiceChoices[] = { wxT("Final Render"), wxT("Normal Map"), wxT("Roughness Map") };
 	int m_visualizationChoiceNChoices = sizeof( m_visualizationChoiceChoices ) / sizeof( wxString );
 	m_visualizationChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_visualizationChoiceNChoices, m_visualizationChoiceChoices, 0 );
 	m_visualizationChoice->SetSelection( 0 );

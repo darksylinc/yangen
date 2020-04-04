@@ -351,7 +351,7 @@ void YangenWindowImpl::createSystems()
 		m_yangenManager->process();
 
 		m_previewItem->setDatablock(
-			m_materialSwitcher->getDatablock( Ogre::YangenVisualizationModes::Roughness ) );
+			m_materialSwitcher->getDatablock( Ogre::YangenVisualizationModes::FinalRender ) );
 
 		Ogre::TextureGpu *heightmapTex = m_yangenManager->getHeightMap();
 		heightmapTex->waitForMetadata();
