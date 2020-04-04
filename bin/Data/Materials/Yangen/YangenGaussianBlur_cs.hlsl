@@ -18,5 +18,5 @@
 
 @piece( image_store )
 	@foreach( 4, iPixel )
-		outputImage[i2Center +  @iPixel * i2Inc] = float4( outColour[ @iPixel ], 0.0, 0.0, 1.0 );@end
+		outputImage[int3(i2Center +  @iPixel * i2Inc, 0)] = float4( outColour[ @iPixel ], 0.0, 0.0, 1.0 );@end
 @end

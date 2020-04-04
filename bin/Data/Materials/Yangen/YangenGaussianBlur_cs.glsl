@@ -18,5 +18,5 @@
 
 @piece( image_store )
 	@foreach( 4, iPixel )
-		imageStore( outputImage, ivec2( i2Center +  @iPixel * i2Inc ), vec4( outColour[ @iPixel ], 0.0, 0.0, 1.0 ) );@end
+		imageStore( outputImage, ivec3( i2Center +  @iPixel * i2Inc, 0 ), vec4( outColour[ @iPixel ], 0.0, 0.0, 1.0 ) );@end
 @end

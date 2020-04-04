@@ -20,5 +20,5 @@
 
 @piece( image_store )
 	@foreach( 4, iPixel )
-		outputImage.write( float4( outColour[ @iPixel ], 0.0, 0.0, 1.0 ), uint2( i2Center +  @iPixel * i2Inc ), 0 );@end
+		outputImage.write( float4( outColour[ @iPixel ], 0.0, 0.0, 1.0 ), uint3( i2Center +  @iPixel * i2Inc, 0u ), 0 );@end
 @end
