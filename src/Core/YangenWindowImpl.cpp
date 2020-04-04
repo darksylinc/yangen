@@ -351,7 +351,13 @@ void YangenWindowImpl::createSystems()
 		m_yangenManager->process();
 
 		m_previewItem->setDatablock(
-			m_materialSwitcher->getDatablock( Ogre::YangenVisualizationModes::FinalRender ) );
+			m_materialSwitcher->getDatablock( Ogre::YangenVisualizationModes::Roughness ) );
+
+		Ogre::TextureGpu *heightmapTex = m_yangenManager->getHeightMap();
+		heightmapTex->waitForMetadata();
+		const float aspectRatio = static_cast<float>( heightmapTex->getWidth() ) /
+								  static_cast<float>( heightmapTex->getHeight() );
+		m_previewSceneNode->setScale( aspectRatio, 1.0f, 1.0f );
 	}
 	catch( Ogre::Exception &e )
 	{

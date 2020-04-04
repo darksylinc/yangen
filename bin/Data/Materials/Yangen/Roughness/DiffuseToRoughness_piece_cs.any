@@ -1,0 +1,44 @@
+
+//#include "SyntaxHighlightingMisc.h"
+
+void header()
+{
+	// @piece( HeaderCS )
+	CONST_BUFFER_STRUCT_BEGIN( DiffuseToRoughnessParams, 0 )
+	{
+		uint2 diffuseMapResolution;
+		uint diffuseMapArrayIdx;
+		uint padding0;
+
+		float midPoint;
+		float scale;
+		float exponent;
+		float padding1;
+	}
+	CONST_BUFFER_STRUCT_END( p );
+	// @end
+}
+
+void body( uint3 gl_GlobalInvocationID )
+{
+	// @piece( BodyCS )
+
+	uint2 iuv = uint2( gl_GlobalInvocationID.xy );
+
+	iuv = min( iuv, p.diffuseMapResolution );
+
+	// Watch out! It's heightXY, but OGRE_LoadArray2D uses YX.
+	float3 diffuseCol = OGRE_LoadArray2D( diffuseMapTex, iuv, p.diffuseMapArrayIdx, 0 ).xyz;
+	float3 blurVal0Col = OGRE_LoadArray2D( blurTex0, iuv, 0, 0 ).xyz;
+
+	float avgVal = ( diffuseCol.x + diffuseCol.y + diffuseCol.z ) / 3.0f;
+	float blurVal0 = ( blurVal0Col.x + blurVal0Col.y + blurVal0Col.z ) / 3.0f;
+
+	float diff = avgVal - blurVal0;
+
+	diff = p.midPoint + pow( abs( diff ), p.exponent ) * sign( diff ) * p.scale;
+
+	OGRE_imageWrite2DArray4( outRoughnessMap, uint3( iuv, 0u ), float4( diff, 0.0f, 0.0f, 1.0f ) );
+
+	// @end
+}

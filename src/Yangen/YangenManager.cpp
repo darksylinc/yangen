@@ -27,6 +27,18 @@ namespace Ogre
 		float depthScale;
 	};
 
+	struct DiffuseToRoughnessParams
+	{
+		uint32 diffuseMapResolution[2];
+		uint32 diffuseMapArrayIdx;
+		uint32 padding0;
+
+		float midPoint;
+		float scale;
+		float exponent;
+		float padding1;
+	};
+
 	YangenManager::YangenManager( const String &texName, HlmsManager *hlmsManager,
 								  CompositorManager2 *compositorManager,
 								  TextureGpuManager *textureGpuManager, SceneManager *sceneManager ) :
@@ -43,6 +55,13 @@ namespace Ogre
 		m_mergeNormalMapsJob( 0 ),
 		m_mergeNormalMapsParams( 0 ),
 		m_mergeNormalMapsSteepness( 0 ),
+		m_diffusemapToRoughnessParams( 0 ),
+		m_diffusemapToRoughnessJob( 0 ),
+		m_diffuseToRoughnessMidpoint( 0.5f ),
+		m_diffuseToRoughnessScale( 0.5f ),
+		m_diffuseToRoughnessExponent( 1.0f ),
+		m_roughnessBlurOffset( 0u ),
+		m_roughnessBlurAmplitude( 2u ),
 		m_defaultGenerateAllConstantDefinitionArrayEntries( false )
 	{
 		m_heightMapToNormalMapStrength[0] = 0.5f;
@@ -64,6 +83,8 @@ namespace Ogre
 
 		m_heightmapToNormalJob =
 			hlmsManager->getComputeHlms()->findComputeJob( "Yangen/HeightToNormalMap" );
+		m_diffusemapToRoughnessJob =
+			hlmsManager->getComputeHlms()->findComputeJob( "Yangen/DiffuseToRoughness" );
 
 		m_mergeNormalMapsJob = hlmsManager->getComputeHlms()->findComputeJob( "Yangen/MergeNormalMaps" );
 
@@ -81,6 +102,12 @@ namespace Ogre
 		{
 			m_textureGpuManager->destroyTexture( m_heightMap );
 			m_heightMap = 0;
+		}
+
+		if( m_roughnessMap )
+		{
+			m_textureGpuManager->destroyTexture( m_roughnessMap );
+			m_roughnessMap = 0;
 		}
 
 		if( m_normalMap )
@@ -103,6 +130,10 @@ namespace Ogre
 			m_texName + "/Normalmap", GpuPageOutStrategy::Discard, TextureFlags::Uav,
 			TextureTypes::Type2DArray, resourceGroup );
 
+		m_roughnessMap = m_textureGpuManager->createOrRetrieveTexture(
+			m_texName + "/Roughness", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray, resourceGroup );
+
 		m_waitableTexture = m_heightMap;
 
 		m_heightMap->waitForMetadata();
@@ -112,7 +143,11 @@ namespace Ogre
 		m_normalMap->setPixelFormat( PFG_RGBA8_SNORM );
 		m_normalMap->setNumMipmaps( 1u );
 
+		m_roughnessMap->copyParametersFrom( m_normalMap );
+		m_roughnessMap->setPixelFormat( PFG_R8_UNORM );
+
 		m_normalMap->scheduleTransitionTo( GpuResidency::Resident );
+		m_roughnessMap->scheduleTransitionTo( GpuResidency::Resident );
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::loadGenerationResources()
@@ -128,14 +163,18 @@ namespace Ogre
 				vaoManager->createConstBuffer( sizeof( HeightmapToNormalParams ), BT_DEFAULT, 0, false );
 		}
 
+		m_diffusemapToRoughnessParams =
+			vaoManager->createConstBuffer( sizeof( DiffuseToRoughnessParams ), BT_DEFAULT, 0, false );
+
 		// Tell Ogre it's a shadow casting camera to avoid penalizing performance
 		m_dummyCamera = m_sceneManager->createCamera( m_texName + "/DummyCam", false );
 
 		CompositorChannelVec channels;
-		channels.reserve( 2u );
+		channels.reserve( 3u );
 
 		channels.push_back( m_heightMap );
 		channels.push_back( m_normalMap );
+		channels.push_back( m_roughnessMap );
 
 		m_workspace = m_compositorManager->addWorkspace( m_sceneManager, channels, m_dummyCamera,
 														 "Yangen/Gen", false );
@@ -144,6 +183,25 @@ namespace Ogre
 	//-------------------------------------------------------------------------
 	void YangenManager::unloadGenerationResources()
 	{
+		VaoManager *vaoManager = m_textureGpuManager->getVaoManager();
+
+		const size_t numParams =
+			sizeof( m_heightmapToNormalParams ) / sizeof( m_heightmapToNormalParams[0] );
+		for( size_t i = 0u; i < numParams; ++i )
+		{
+			if( m_heightmapToNormalParams[i] )
+			{
+				vaoManager->destroyConstBuffer( m_heightmapToNormalParams[i] );
+				m_heightmapToNormalParams[i] = 0;
+			}
+		}
+
+		if( m_diffusemapToRoughnessParams )
+		{
+			vaoManager->destroyConstBuffer( m_diffusemapToRoughnessParams );
+			m_diffusemapToRoughnessParams = 0;
+		}
+
 		if( m_dummyCamera )
 		{
 			m_sceneManager->destroyCamera( m_dummyCamera );
@@ -194,6 +252,20 @@ namespace Ogre
 
 		m_mergeNormalMapsSteepness->setManualValue( steepnessVal, numSteepnessParams );
 		m_mergeNormalMapsParams->setDirty();
+
+		DiffuseToRoughnessParams diffuseToRoughnessParams;
+		diffuseToRoughnessParams.diffuseMapResolution[0] = m_heightMap->getWidth();
+		diffuseToRoughnessParams.diffuseMapResolution[1] = m_heightMap->getHeight();
+		diffuseToRoughnessParams.diffuseMapArrayIdx = m_heightMap->getInternalSliceStart();
+		diffuseToRoughnessParams.padding0 = 0u;
+
+		diffuseToRoughnessParams.midPoint = m_diffuseToRoughnessMidpoint;
+		diffuseToRoughnessParams.scale = m_diffuseToRoughnessScale;
+		diffuseToRoughnessParams.exponent = m_diffuseToRoughnessExponent;
+		diffuseToRoughnessParams.padding1 = 0.0f;
+		m_diffusemapToRoughnessParams->upload( &diffuseToRoughnessParams, 0u,
+											   sizeof( diffuseToRoughnessParams ) );
+		m_diffusemapToRoughnessJob->setConstBuffer( 0u, m_diffusemapToRoughnessParams );
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::setGaussianFilterParams( Ogre::HlmsComputeJob *job, Ogre::uint8 kernelRadius,
@@ -332,6 +404,27 @@ namespace Ogre
 			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurV" );
 			setGaussianFilterParams( gaussJob, m_heightMapToNormalMapBlurRadius[identifier - 21u],
 									 0.5f );
+		}
+		else if( identifier >= 121u && identifier <= 122u )
+		{
+			HlmsCompute *hlmsCompute =
+				static_cast<HlmsCompute *>( m_heightmapToNormalJob->getCreator() );
+			HlmsComputeJob *gaussJob = 0;
+
+			uint8 blurRadius = 0u;
+			if( identifier == 121u )
+				blurRadius = m_roughnessBlurOffset;
+			else
+				blurRadius = m_roughnessBlurOffset + m_roughnessBlurAmplitude;
+
+			// We need this set so that large filter radiuses actually work
+			Ogre::GpuNamedConstants::setGenerateAllConstantDefinitionArrayEntries( true );
+
+			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurH" );
+			setGaussianFilterParams( gaussJob, blurRadius, 0.5f );
+
+			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurV" );
+			setGaussianFilterParams( gaussJob, blurRadius, 0.5f );
 		}
 	}
 	//-------------------------------------------------------------------------

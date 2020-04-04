@@ -39,13 +39,21 @@ namespace Ogre
 			hlmsPbs->createDatablock( datablockName, datablockName, Ogre::HlmsMacroblock(),
 									  Ogre::HlmsBlendblock(), Ogre::HlmsParamVec() ) );
 
+		m_datablocks[YangenVisualizationModes::FinalRender] = pbsDatablock;
+
+		Ogre::HlmsUnlitDatablock *unlitDatablock = 0;
+
 		datablockName = baseName + "/" + StringConverter::toString( numMaterials++ );
-		Ogre::HlmsUnlitDatablock *unlitDatablock = static_cast<Ogre::HlmsUnlitDatablock *>(
+		unlitDatablock = static_cast<Ogre::HlmsUnlitDatablock *>(
 			hlmsUnlit->createDatablock( datablockName, datablockName, Ogre::HlmsMacroblock(),
 										Ogre::HlmsBlendblock(), Ogre::HlmsParamVec() ) );
-
-		m_datablocks[YangenVisualizationModes::FinalRender] = pbsDatablock;
 		m_datablocks[YangenVisualizationModes::Normal] = unlitDatablock;
+
+		datablockName = baseName + "/" + StringConverter::toString( numMaterials++ );
+		unlitDatablock = static_cast<Ogre::HlmsUnlitDatablock *>(
+			hlmsUnlit->createDatablock( datablockName, datablockName, Ogre::HlmsMacroblock(),
+										Ogre::HlmsBlendblock(), Ogre::HlmsParamVec() ) );
+		m_datablocks[YangenVisualizationModes::Roughness] = unlitDatablock;
 	}
 	//-------------------------------------------------------------------------
 	MaterialSwitcher::~MaterialSwitcher() {}
@@ -55,12 +63,18 @@ namespace Ogre
 		Ogre::HlmsPbsDatablock *pbsDatablock =
 			static_cast<Ogre::HlmsPbsDatablock *>( m_datablocks[YangenVisualizationModes::FinalRender] );
 
+		pbsDatablock->setTexture( PBSM_DIFFUSE, m_yangenManager->getDiffuseMap() );
 		pbsDatablock->setTexture( PBSM_NORMAL, m_yangenManager->getNormalMap() );
 
-		Ogre::HlmsUnlitDatablock *unlitDatablock =
-			static_cast<Ogre::HlmsUnlitDatablock *>( m_datablocks[YangenVisualizationModes::Normal] );
+		Ogre::HlmsUnlitDatablock *unlitDatablock = 0;
 
+		unlitDatablock =
+			static_cast<Ogre::HlmsUnlitDatablock *>( m_datablocks[YangenVisualizationModes::Normal] );
 		unlitDatablock->setTexture( 0, m_yangenManager->getNormalMap() );
+
+		unlitDatablock =
+			static_cast<Ogre::HlmsUnlitDatablock *>( m_datablocks[YangenVisualizationModes::Roughness] );
+		unlitDatablock->setTexture( 0, m_yangenManager->getRoughnessMap() );
 	}
 	//-------------------------------------------------------------------------
 	HlmsDatablock *MaterialSwitcher::getDatablock(

@@ -23,6 +23,7 @@ namespace Ogre
 
 		TextureGpu *m_heightMap;
 		TextureGpu *m_normalMap;
+		TextureGpu *m_roughnessMap;
 
 		CompositorWorkspace *m_workspace;
 
@@ -38,9 +39,19 @@ namespace Ogre
 		ShaderParams *       m_mergeNormalMapsParams;
 		ShaderParams::Param *m_mergeNormalMapsSteepness;
 
+		ConstBufferPacked *m_diffusemapToRoughnessParams;
+		HlmsComputeJob *   m_diffusemapToRoughnessJob;
+
 		float m_heightMapToNormalMapStrength[3];
 		uint8 m_heightMapToNormalMapBlurRadius[2];
 		float m_normalMapSteepness[3];
+
+		float m_diffuseToRoughnessMidpoint;
+		float m_diffuseToRoughnessScale;
+		float m_diffuseToRoughnessExponent;
+
+		uint8 m_roughnessBlurOffset;
+		uint8 m_roughnessBlurAmplitude;
 
 		bool m_defaultGenerateAllConstantDefinitionArrayEntries;
 
@@ -100,6 +111,9 @@ namespace Ogre
 		virtual void passPreExecute( CompositorPass *pass );
 		virtual void passPosExecute( CompositorPass *pass );
 
+		TextureGpu *getDiffuseMap() const { return m_heightMap; }
+		TextureGpu *getHeightMap() const { return m_heightMap; }
 		TextureGpu *getNormalMap() const { return m_normalMap; }
+		TextureGpu *getRoughnessMap() const { return m_roughnessMap; }
 	};
 }  // namespace Ogre

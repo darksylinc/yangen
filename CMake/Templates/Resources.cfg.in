@@ -12,6 +12,7 @@ FileSystem=@OGRE_MEDIA_DIR@Data/Hlms/Common/GLSL
 FileSystem=@OGRE_MEDIA_DIR@Data/Hlms/Common/HLSL
 FileSystem=@OGRE_MEDIA_DIR@Data/Hlms/Common/Metal
 FileSystem=@OGRE_MEDIA_DIR@Data/Materials/Yangen
+FileSystem=@OGRE_MEDIA_DIR@Data/Materials/Yangen/Roughness
 FileSystem=@OGRE_MEDIA_DIR@Data/Meshes
 
 # Do not load this as a resource. It's here merely to tell the code where

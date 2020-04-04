@@ -18,6 +18,7 @@ namespace Ogre
 		{
 			FinalRender,
 			Normal,
+			Roughness,
 			NumYangenVisualizationModes
 		};
 	}
