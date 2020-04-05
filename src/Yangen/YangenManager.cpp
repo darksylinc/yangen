@@ -371,6 +371,12 @@ namespace Ogre
 		m_heightMapToNormalMapStrength[detailIdx] = strength;
 	}
 	//-------------------------------------------------------------------------
+	float YangenManager::getHeightMapToNormalMapStrength( uint8 detailIdx ) const
+	{
+		assert( detailIdx < 3u );
+		return m_heightMapToNormalMapStrength[detailIdx];
+	}
+	//-------------------------------------------------------------------------
 	void YangenManager::setHeightMapToNormalMapRadius( uint8 radius, uint8 detailIdx )
 	{
 		assert( detailIdx > 0u && detailIdx < 3u );
@@ -379,10 +385,22 @@ namespace Ogre
 		m_heightMapToNormalMapBlurRadius[detailIdx - 1u] = radius;
 	}
 	//-------------------------------------------------------------------------
+	uint8 YangenManager::getHeightMapToNormalMapRadius( uint8 detailIdx ) const
+	{
+		assert( detailIdx > 0u && detailIdx < 3u );
+		return m_heightMapToNormalMapBlurRadius[detailIdx - 1u];
+	}
+	//-------------------------------------------------------------------------
 	void YangenManager::setNormalMapSteepness( float steepness, uint8 detailIdx )
 	{
 		assert( detailIdx < 3u );
 		m_normalMapSteepness[detailIdx] = steepness;
+	}
+	//-------------------------------------------------------------------------
+	float YangenManager::getNormalMapSteepness( uint8 detailIdx ) const
+	{
+		assert( detailIdx < 3u );
+		return m_normalMapSteepness[detailIdx];
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::setRoughnessMidpoint( float midpoint )

@@ -25,35 +25,48 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 	m_yangenManager( yangenManager )
 {
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapDepth0Slider, m_normalMapDepth0TextCtrl, -20.0f, 20.0f ) );
+		new ConvertScaled( m_normalMapDepth0Slider, m_normalMapDepth0TextCtrl, -20.0f, 20.0f ),
+		m_yangenManager->getHeightMapToNormalMapStrength( 0u ) );
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapDepth1Slider, m_normalMapDepth1TextCtrl, -20.0f, 20.0f ) );
+		new ConvertScaled( m_normalMapDepth1Slider, m_normalMapDepth1TextCtrl, -20.0f, 20.0f ),
+		m_yangenManager->getHeightMapToNormalMapStrength( 1u ) );
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapDepth2Slider, m_normalMapDepth2TextCtrl, -20.0f, 20.0f ) );
+		new ConvertScaled( m_normalMapDepth2Slider, m_normalMapDepth2TextCtrl, -20.0f, 20.0f ),
+		m_yangenManager->getHeightMapToNormalMapStrength( 2u ) );
 
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapRadius1Slider, m_normalMapRadius1TextCtrl, 2.0f, 64.0f, true ) );
+		new ConvertScaled( m_normalMapRadius1Slider, m_normalMapRadius1TextCtrl, 2.0f, 64.0f, true ),
+		m_yangenManager->getHeightMapToNormalMapRadius( 1u ) );
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapRadius2Slider, m_normalMapRadius2TextCtrl, 2.0f, 64.0f, true ) );
+		new ConvertScaled( m_normalMapRadius2Slider, m_normalMapRadius2TextCtrl, 2.0f, 64.0f, true ),
+		m_yangenManager->getHeightMapToNormalMapRadius( 2u ) );
 
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapSteepness0Slider, m_normalMapSteepness0TextCtrl, -10.0f, 10.0f ) );
+		new ConvertScaled( m_normalMapSteepness0Slider, m_normalMapSteepness0TextCtrl, -10.0f, 10.0f ),
+		m_yangenManager->getNormalMapSteepness( 0u ) );
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapSteepness1Slider, m_normalMapSteepness1TextCtrl, -10.0f, 10.0f ) );
+		new ConvertScaled( m_normalMapSteepness1Slider, m_normalMapSteepness1TextCtrl, -10.0f, 10.0f ),
+		m_yangenManager->getNormalMapSteepness( 1u ) );
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_normalMapSteepness2Slider, m_normalMapSteepness2TextCtrl, -10.0f, 10.0f ) );
+		new ConvertScaled( m_normalMapSteepness2Slider, m_normalMapSteepness2TextCtrl, -10.0f, 10.0f ),
+		m_yangenManager->getNormalMapSteepness( 2u ) );
 
 	mapSliderAndTextCtrl( new ConvertScaled( m_roughnessBlurOffsetSlider, m_roughnessBlurOffsetTextCtrl,
-											 0.0f, 32.0f, true ) );
+											 0.0f, 32.0f, true ),
+						  m_yangenManager->getRoughnessBlurOffset() );
 	mapSliderAndTextCtrl( new ConvertScaled( m_roughnessBlurAmplitudeSlider,
-											 m_roughnessBlurAmplitudeTextCtrl, 0.0f, 32.0f, true ) );
+											 m_roughnessBlurAmplitudeTextCtrl, 0.0f, 32.0f, true ),
+						  m_yangenManager->getRoughnessBlurAmplitude() );
 
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_roughnessMidpointSlider, m_roughnessMidpointTextCtrl, -0.5f, 1.5f ) );
+		new ConvertScaled( m_roughnessMidpointSlider, m_roughnessMidpointTextCtrl, -0.5f, 1.5f ),
+		m_yangenManager->getRoughnessMidpoint() );
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_roughnessScaleSlider, m_roughnessScaleTextCtrl, -4.0f, 4.0f ) );
+		new ConvertScaled( m_roughnessScaleSlider, m_roughnessScaleTextCtrl, -4.0f, 4.0f ),
+		m_yangenManager->getRoughnessScale() );
 	mapSliderAndTextCtrl(
-		new ConvertScaled( m_roughnessExponentSlider, m_roughnessExponentTextCtrl, 0.0f, 2.0f ) );
+		new ConvertScaled( m_roughnessExponentSlider, m_roughnessExponentTextCtrl, 0.0f, 2.0f ),
+		m_yangenManager->getRoughnessExponent() );
 
 	mInitializing = false;
 }

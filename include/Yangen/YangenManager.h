@@ -80,7 +80,8 @@ namespace Ogre
 
 		void process();
 
-		void setHeightMapToNormalMapStrength( float strength, uint8 detailIdx );
+		void  setHeightMapToNormalMapStrength( float strength, uint8 detailIdx );
+		float getHeightMapToNormalMapStrength( uint8 detailIdx ) const;
 
 		/** Sets the radius of the gaussian blur we apply to each detail
 
@@ -92,7 +93,8 @@ namespace Ogre
 		@param detailIdx
 			Value in range [1; 3)
 		*/
-		void setHeightMapToNormalMapRadius( uint8 radius, uint8 detailIdx );
+		void  setHeightMapToNormalMapRadius( uint8 radius, uint8 detailIdx );
+		uint8 getHeightMapToNormalMapRadius( uint8 detailIdx ) const;
 
 		/** Sets the steepness of each detail.
 			A positive steepness means the normal is bent away and usually
@@ -106,7 +108,8 @@ namespace Ogre
 		@param detailIdx
 			Value in range [0; 3)
 		 */
-		void setNormalMapSteepness( float steepness, uint8 detailIdx );
+		void  setNormalMapSteepness( float steepness, uint8 detailIdx );
+		float getNormalMapSteepness( uint8 detailIdx ) const;
 
 		void  setRoughnessMidpoint( float midpoint );
 		float getRoughnessMidpoint() const;
