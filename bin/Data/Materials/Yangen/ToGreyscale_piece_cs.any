@@ -1,0 +1,18 @@
+
+//#include "SyntaxHighlightingMisc.h"
+
+void body( uint3 gl_GlobalInvocationID )
+{
+	// @piece( BodyCS )
+
+	uint2 iuv = uint2( gl_GlobalInvocationID.xy );
+
+	iuv = min( iuv, p_diffuseMapResolution );
+
+	float3 colourValue = OGRE_LoadArray2D( colourMapTex, iuv, p_diffuseMapIndex, 0 ).xyz;
+	float greyscale = ( colourValue.x + colourValue.y + colourValue.z ) / 3.0f;
+
+	OGRE_imageWrite2DArray4( outGreyscaleMap, uint3( iuv, 0u ), float4( greyscale, 0.0f, 0.0f, 1.0f ) );
+
+	// @end
+}

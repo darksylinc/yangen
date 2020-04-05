@@ -15,17 +15,33 @@
 
 namespace Ogre
 {
+
 	class YangenManager : public CompositorWorkspaceListener
 	{
 		String m_texName;
 
 		TextureGpu *m_waitableTexture;
 
+		/** There are three possiblities:
+				1. m_diffuseMap was provided.
+					a. We generate m_greyscaleMap out of the diffuse map
+					b. m_heightMap = m_greyscaleMap (same pointer)
+				2. m_heightMap was provided.
+					a. There's no diffuse.
+					b. m_diffuseMap = nullptr
+					c. m_heightMap = m_greyscaleMap (same pointer)
+				3. m_diffuseMap & m_heightMap were provided
+					a. We generate m_greyscaleMap out of the diffuse map
+					b. None of the 3 variables are nullptr, they're all different memory regions
+		*/
+		TextureGpu *m_diffuseMap;
+		TextureGpu *m_greyscaleMap;
 		TextureGpu *m_heightMap;
 		TextureGpu *m_normalMap;
 		TextureGpu *m_roughnessMap;
 
 		CompositorWorkspace *m_workspace;
+		CompositorWorkspace *m_greyscaleWorkspace;
 
 		CompositorManager2 *m_compositorManager;
 		TextureGpuManager * m_textureGpuManager;
@@ -76,6 +92,10 @@ namespace Ogre
 					   SceneManager *sceneManager );
 		virtual ~YangenManager();
 
+		/** Loads from a heightmap. Assumes the heightmap is also the diffuse map (greyscale)
+		@param filename
+		@param resourceGroup
+		*/
 		void loadFromHeightmap( const String &filename, const String &resourceGroup );
 
 		void process();
@@ -129,7 +149,7 @@ namespace Ogre
 		virtual void passPreExecute( CompositorPass *pass );
 		virtual void passPosExecute( CompositorPass *pass );
 
-		TextureGpu *getDiffuseMap() const { return m_heightMap; }
+		TextureGpu *getDiffuseMap() const { return m_diffuseMap; }
 		TextureGpu *getHeightMap() const { return m_heightMap; }
 		TextureGpu *getNormalMap() const { return m_normalMap; }
 		TextureGpu *getRoughnessMap() const { return m_roughnessMap; }

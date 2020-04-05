@@ -43,9 +43,12 @@ namespace Ogre
 								  TextureGpuManager *textureGpuManager, SceneManager *sceneManager ) :
 		m_texName( texName ),
 		m_waitableTexture( 0 ),
+		m_diffuseMap( 0 ),
+		m_greyscaleMap( 0 ),
 		m_heightMap( 0 ),
 		m_normalMap( 0 ),
 		m_workspace( 0 ),
+		m_greyscaleWorkspace( 0 ),
 		m_compositorManager( compositorManager ),
 		m_textureGpuManager( textureGpuManager ),
 		m_sceneManager( sceneManager ),
@@ -147,6 +150,9 @@ namespace Ogre
 
 		m_normalMap->scheduleTransitionTo( GpuResidency::Resident );
 		m_roughnessMap->scheduleTransitionTo( GpuResidency::Resident );
+
+		m_diffuseMap = 0;
+		m_greyscaleMap = m_heightMap;
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::loadGenerationResources()
@@ -169,14 +175,30 @@ namespace Ogre
 		m_dummyCamera = m_sceneManager->createCamera( m_texName + "/DummyCam", false );
 
 		CompositorChannelVec channels;
-		channels.reserve( 3u );
+		channels.reserve( 4u );
 
+		ResourceLayoutMap initialLayouts;
+		ResourceAccessMap initialAccess;
+		if( m_diffuseMap )
+		{
+			channels.clear();
+			channels.push_back( m_diffuseMap );
+			channels.push_back( m_greyscaleMap );
+			m_greyscaleWorkspace = m_compositorManager->addWorkspace(
+				m_sceneManager, channels, m_dummyCamera, "Yangen/ToGreyscale", false );
+
+			m_greyscaleWorkspace->fillUavDependenciesForNextWorkspace( initialLayouts, initialAccess );
+		}
+
+		channels.clear();
+		channels.push_back( m_greyscaleMap );
 		channels.push_back( m_heightMap );
 		channels.push_back( m_normalMap );
 		channels.push_back( m_roughnessMap );
 
-		m_workspace = m_compositorManager->addWorkspace( m_sceneManager, channels, m_dummyCamera,
-														 "Yangen/Gen", false );
+		m_workspace = m_compositorManager->addWorkspace(
+			m_sceneManager, channels, m_dummyCamera, "Yangen/Gen", false, -1, (UavBufferPackedVec *)0,
+			&initialLayouts, &initialAccess );
 		m_workspace->addListener( this );
 	}
 	//-------------------------------------------------------------------------
@@ -211,6 +233,12 @@ namespace Ogre
 		{
 			m_compositorManager->removeWorkspace( m_workspace );
 			m_workspace = 0;
+		}
+
+		if( m_greyscaleWorkspace )
+		{
+			m_compositorManager->removeWorkspace( m_greyscaleWorkspace );
+			m_greyscaleWorkspace = 0;
 		}
 	}
 	//-------------------------------------------------------------------------
@@ -359,6 +387,13 @@ namespace Ogre
 
 		m_defaultGenerateAllConstantDefinitionArrayEntries =
 			Ogre::GpuNamedConstants::getGenerateAllConstantDefinitionArrayEntries();
+
+		if( m_greyscaleWorkspace )
+		{
+			m_greyscaleWorkspace->_beginUpdate( false );
+			m_greyscaleWorkspace->_update();
+			m_greyscaleWorkspace->_endUpdate( false );
+		}
 
 		m_workspace->_beginUpdate( false );
 		m_workspace->_update();

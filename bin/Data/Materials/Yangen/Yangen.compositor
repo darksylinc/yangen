@@ -1,13 +1,14 @@
 compositor_node Yangen/Node
 {
-	in 0 height_map
-	in 1 normal_map
-	in 2 roughness_map
+	in 0 greyscale_map
+	in 1 height_map
+	in 2 normal_map
+	in 3 roughness_map
 
 	// We need higher precision for the blur otherwise artifacts appear for extreme settings
-	texture blurredHeight1		target_width target_height 1 2d_array PFG_RGBA16_UNORM uav
-	texture blurredHeight2		target_width target_height 1 2d_array PFG_RGBA16_UNORM uav
-	texture tmpGaussianFilter	target_width target_height 1 2d_array PFG_RGBA16_UNORM uav
+	texture blurredHeight1		target_width target_height 1 2d_array PFG_R16_UNORM uav
+	texture blurredHeight2		target_width target_height 1 2d_array PFG_R16_UNORM uav
+	texture tmpGaussianFilter	target_width target_height 1 2d_array PFG_R16_UNORM uav
 
 	texture tmpNormalMap0 target_width target_height PFG_RGBA32_FLOAT uav
 	texture tmpNormalMap1 target_width target_height PFG_RGBA32_FLOAT uav
@@ -87,27 +88,13 @@ compositor_node Yangen/Node
 		}
 
 		// Roughness map
+		//
+		// We flipped the order of the gaussian blurs to avoid excessive state changes
+		// (some textures are already set from previous passes)
 		pass compute
 		{
 			job Yangen/GaussianBlurH
-			input 0 height_map
-			uav 0 tmpGaussianFilter write
-
-			identifier 121
-		}
-
-		pass compute
-		{
-			job Yangen/GaussianBlurV
-			input 0 tmpGaussianFilter
-			uav 0 blurredHeight1 write
-
-		}
-
-		pass compute
-		{
-			job Yangen/GaussianBlurH
-			input 0 height_map
+			input 0 greyscale_map
 			uav 0 tmpGaussianFilter write
 
 			identifier 122
@@ -118,6 +105,22 @@ compositor_node Yangen/Node
 			job Yangen/GaussianBlurV
 			input 0 tmpGaussianFilter
 			uav 0 blurredHeight2 write
+		}
+
+		pass compute
+		{
+			job Yangen/GaussianBlurH
+			input 0 greyscale_map
+			uav 0 tmpGaussianFilter write
+
+			identifier 121
+		}
+
+		pass compute
+		{
+			job Yangen/GaussianBlurV
+			input 0 tmpGaussianFilter
+			uav 0 blurredHeight1 write
 
 			identifier 32u
 		}
@@ -138,4 +141,27 @@ workspace Yangen/Gen
 	connect_external 0 Yangen/Node 0
 	connect_external 1 Yangen/Node 1
 	connect_external 2 Yangen/Node 2
+	connect_external 3 Yangen/Node 3
+}
+
+compositor_node Yangen/ToGreyscale
+{
+	in 0 diffuse_map
+	in 1 greyscale_map
+
+	target diffuse_map
+	{
+		pass compute
+		{
+			job Yangen/ToGreyscale
+			input 0 diffuse_map
+			uav 0 greyscale_map write
+		}
+	}
+}
+
+workspace Yangen/ToGreyscale
+{
+	connect_external 0 Yangen/ToGreyscale 0
+	connect_external 1 Yangen/ToGreyscale 1
 }
