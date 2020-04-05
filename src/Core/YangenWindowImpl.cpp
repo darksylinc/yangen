@@ -7,6 +7,7 @@
 #include "Core/YangenWindowImpl.h"
 
 #include "Constants.h"
+#include "Core/ResourceListener.h"
 #include "Core/TexturePanelImpl.h"
 #include "Core/VisualizationPanelImpl.h"
 
@@ -58,6 +59,7 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 	m_sceneManager( 0 ),
 	m_camera( 0 ),
 	m_workspace( 0 ),
+	m_resourceListener( 0 ),
 	m_wxOgreRenderWindow( 0 ),
 	m_mainNotebook( 0 ),
 	m_texturePanelImpl( 0 ),
@@ -202,6 +204,11 @@ YangenWindowImpl::~YangenWindowImpl()
 		m_wxOgreRenderWindow = 0;
 	}
 
+	Ogre::ResourceGroupManager &resourceGroupManager = Ogre::ResourceGroupManager::getSingleton();
+	resourceGroupManager.setLoadingListener( 0 );
+	delete m_resourceListener;
+	m_resourceListener = 0;
+
 	Ogre::LogManager::getSingleton().getDefaultLog()->removeListener( this );
 
 	if( m_root )
@@ -297,6 +304,10 @@ void YangenWindowImpl::initOgre( bool bForceSetup )
 //-----------------------------------------------------------------------------
 void YangenWindowImpl::createSystems()
 {
+	m_resourceListener = new ResourceListener();
+	Ogre::ResourceGroupManager &resourceGroupManager = Ogre::ResourceGroupManager::getSingleton();
+	resourceGroupManager.setLoadingListener( m_resourceListener );
+
 	m_sceneManager = m_root->createSceneManager( Ogre::ST_GENERIC, 1u );
 	m_camera = m_sceneManager->createCamera( "Main Camera" );
 	m_camera->setPosition( Ogre::Vector3( 0.0f, 0.0f, 1.25f ) );
@@ -366,7 +377,7 @@ void YangenWindowImpl::createSystems()
 	}
 }
 
-//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void YangenWindowImpl::addResourceLocation( const Ogre::String &archName, const Ogre::String &typeName,
 											const Ogre::String &secName )
 {
@@ -821,7 +832,25 @@ void YangenWindowImpl::loadTextureDialog()
 
 	if( openFileDialog.ShowModal() == wxID_OK )
 	{
-		// loadTexture( std::string( openFileDialog.GetPath().mb_str() ) );
+		try
+		{
+			m_yangenManager->loadFromHeightmap( Ogre::String( openFileDialog.GetPath().mb_str() ),
+												"Listener Group" );
+			m_materialSwitcher->prepareMaterials();
+			m_yangenManager->process();
+
+			Ogre::TextureGpu *heightmapTex = m_yangenManager->getHeightMap();
+			heightmapTex->waitForMetadata();
+			const float aspectRatio = static_cast<float>( heightmapTex->getWidth() ) /
+									  static_cast<float>( heightmapTex->getHeight() );
+			m_previewSceneNode->setScale( aspectRatio, 1.0f, 1.0f );
+			m_previewSceneNode->_getFullTransformUpdated();
+		}
+		catch( Ogre::Exception &e )
+		{
+			Ogre::LogManager::getSingleton().logMessage( e.getFullDescription() );
+			throw;
+		}
 	}
 }
 //-----------------------------------------------------------------------------

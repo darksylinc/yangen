@@ -39,6 +39,8 @@ namespace TF
 	class CameraController;
 }
 
+class ResourceListener;
+
 //// end generated include
 
 /** Implementing YangenWindowImpl */
@@ -54,6 +56,7 @@ class YangenWindowImpl : public YangenWindow,
 	Ogre::SceneManager *       m_sceneManager;
 	Ogre::Camera *             m_camera;
 	Ogre::CompositorWorkspace *m_workspace;
+	ResourceListener *         m_resourceListener;
 
 	wxOgreRenderWindow *    m_wxOgreRenderWindow;
 	wxAuiNotebook *         m_mainNotebook;

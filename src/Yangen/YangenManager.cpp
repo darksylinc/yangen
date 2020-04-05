@@ -47,6 +47,7 @@ namespace Ogre
 		m_greyscaleMap( 0 ),
 		m_heightMap( 0 ),
 		m_normalMap( 0 ),
+		m_roughnessMap( 0 ),
 		m_workspace( 0 ),
 		m_greyscaleWorkspace( 0 ),
 		m_compositorManager( compositorManager ),
@@ -100,8 +101,24 @@ namespace Ogre
 	{
 		unloadGenerationResources();
 
+		if( m_greyscaleMap == m_heightMap )
+			m_greyscaleMap = 0;
+		else if( m_greyscaleMap )
+		{
+			m_textureGpuManager->destroyTexture( m_greyscaleMap );
+			m_greyscaleMap = 0;
+		}
+
+		if( m_diffuseMap )
+		{
+			m_textureGpuManager->_removeMetadataCacheEntry( m_diffuseMap );
+			m_textureGpuManager->destroyTexture( m_diffuseMap );
+			m_diffuseMap = 0;
+		}
+
 		if( m_heightMap )
 		{
+			m_textureGpuManager->_removeMetadataCacheEntry( m_heightMap );
 			m_textureGpuManager->destroyTexture( m_heightMap );
 			m_heightMap = 0;
 		}
@@ -123,6 +140,8 @@ namespace Ogre
 	//-------------------------------------------------------------------------
 	void YangenManager::loadFromHeightmap( const String &filename, const String &resourceGroup )
 	{
+		unloadTextures();
+
 		m_heightMap = m_textureGpuManager->createOrRetrieveTexture(
 			filename, m_texName + "/Heightmap", GpuPageOutStrategy::Discard,
 			CommonTextureTypes::Monochrome, resourceGroup );
