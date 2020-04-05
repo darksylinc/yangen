@@ -77,6 +77,8 @@ class YangenWindowImpl : public YangenWindow,
 	Ogre::Item *     m_previewItem;
 	Ogre::SceneNode *m_previewSceneNode;
 
+	wxString m_lastOpenDir;
+
 	// Directory where we have write access to write our settings
 	std::string m_configDirectory;
 
@@ -93,7 +95,12 @@ class YangenWindowImpl : public YangenWindow,
 	void loadPlanePreview();
 	void unloadPreview();
 
-	void loadTextureDialog();
+	void loadTexture( const Ogre::String &diffuseFullpath, const Ogre::String &heightmapFullpath );
+
+	void stripFilenameFromPath( const wxString &inFullpath, wxString &outFolder );
+
+	void loadTextureDialog( bool bHeightmap );
+	void loadTextureDialogBoth();
 	void saveTextureDialog();
 
 	// Virtual event handlers, overide them in your derived class

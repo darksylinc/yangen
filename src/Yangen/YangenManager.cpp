@@ -138,6 +138,50 @@ namespace Ogre
 		m_waitableTexture = 0;
 	}
 	//-------------------------------------------------------------------------
+	void YangenManager::loadFromDiffusemap( const String &filename, const String &resourceGroup )
+	{
+		unloadTextures();
+
+		m_diffuseMap = m_textureGpuManager->createOrRetrieveTexture(
+			filename, m_texName + "/Diffuse", GpuPageOutStrategy::Discard, CommonTextureTypes::Diffuse,
+			resourceGroup );
+		m_diffuseMap->scheduleTransitionTo( GpuResidency::Resident );
+
+		m_heightMap = m_textureGpuManager->createOrRetrieveTexture(
+			filename, m_texName + "/Heightmap", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray, resourceGroup );
+
+		m_normalMap = m_textureGpuManager->createOrRetrieveTexture(
+			m_texName + "/Normalmap", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray, resourceGroup );
+
+		m_roughnessMap = m_textureGpuManager->createOrRetrieveTexture(
+			m_texName + "/Roughness", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray, resourceGroup );
+
+		m_waitableTexture = m_heightMap;
+
+		m_diffuseMap->waitForMetadata();
+
+		m_heightMap->copyParametersFrom( m_diffuseMap );
+		m_heightMap->setTextureType( TextureTypes::Type2DArray );
+		m_heightMap->setPixelFormat( PFG_R8_UNORM );
+		m_heightMap->setNumMipmaps( 1u );
+
+		m_normalMap->copyParametersFrom( m_heightMap );
+		m_normalMap->setPixelFormat( PFG_RGBA8_SNORM );
+		m_normalMap->setNumMipmaps( 1u );
+
+		m_roughnessMap->copyParametersFrom( m_normalMap );
+		m_roughnessMap->setPixelFormat( PFG_R8_UNORM );
+
+		m_heightMap->scheduleTransitionTo( GpuResidency::Resident );
+		m_normalMap->scheduleTransitionTo( GpuResidency::Resident );
+		m_roughnessMap->scheduleTransitionTo( GpuResidency::Resident );
+
+		m_greyscaleMap = m_heightMap;
+	}
+	//-------------------------------------------------------------------------
 	void YangenManager::loadFromHeightmap( const String &filename, const String &resourceGroup )
 	{
 		unloadTextures();
@@ -172,6 +216,58 @@ namespace Ogre
 
 		m_diffuseMap = 0;
 		m_greyscaleMap = m_heightMap;
+	}
+	//-------------------------------------------------------------------------
+	void YangenManager::loadFromDiffuseAndHeightmap( const String &diffuseName,
+													 const String &diffuseResourceGroup,
+													 const String &heightName,
+													 const String &heightResourceGroup )
+	{
+		unloadTextures();
+
+		m_diffuseMap = m_textureGpuManager->createOrRetrieveTexture(
+			diffuseName, m_texName + "/Diffuse", GpuPageOutStrategy::Discard,
+			CommonTextureTypes::Diffuse, diffuseResourceGroup );
+		m_diffuseMap->scheduleTransitionTo( GpuResidency::Resident );
+
+		m_heightMap = m_textureGpuManager->createOrRetrieveTexture(
+			heightName, m_texName + "/Heightmap", GpuPageOutStrategy::Discard,
+			CommonTextureTypes::Monochrome, heightResourceGroup );
+		m_heightMap->scheduleTransitionTo( GpuResidency::Resident );
+
+		m_greyscaleMap = m_textureGpuManager->createOrRetrieveTexture(
+			m_texName + "/Greyscale", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray, diffuseResourceGroup );
+
+		m_normalMap = m_textureGpuManager->createOrRetrieveTexture(
+			m_texName + "/Normalmap", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray, diffuseResourceGroup );
+
+		m_roughnessMap = m_textureGpuManager->createOrRetrieveTexture(
+			m_texName + "/Roughness", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray, diffuseResourceGroup );
+
+		m_waitableTexture = m_heightMap;
+
+		m_heightMap->waitForMetadata();
+		m_diffuseMap->waitForMetadata();
+
+		m_normalMap->copyParametersFrom( m_heightMap );
+		m_normalMap->setTextureType( TextureTypes::Type2DArray );
+		m_normalMap->setPixelFormat( PFG_RGBA8_SNORM );
+		m_normalMap->setNumMipmaps( 1u );
+
+		m_roughnessMap->copyParametersFrom( m_diffuseMap );
+		m_roughnessMap->setTextureType( TextureTypes::Type2DArray );
+		m_roughnessMap->setPixelFormat( PFG_R8_UNORM );
+
+		m_greyscaleMap->copyParametersFrom( m_diffuseMap );
+		m_greyscaleMap->setTextureType( TextureTypes::Type2DArray );
+		m_greyscaleMap->setPixelFormat( PFG_R8_UNORM );
+
+		m_normalMap->scheduleTransitionTo( GpuResidency::Resident );
+		m_roughnessMap->scheduleTransitionTo( GpuResidency::Resident );
+		m_greyscaleMap->scheduleTransitionTo( GpuResidency::Resident );
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::loadGenerationResources()
@@ -300,8 +396,8 @@ namespace Ogre
 		m_mergeNormalMapsParams->setDirty();
 
 		DiffuseToRoughnessParams diffuseToRoughnessParams;
-		diffuseToRoughnessParams.diffuseMapResolution[0] = m_heightMap->getWidth();
-		diffuseToRoughnessParams.diffuseMapResolution[1] = m_heightMap->getHeight();
+		diffuseToRoughnessParams.diffuseMapResolution[0] = m_greyscaleMap->getWidth();
+		diffuseToRoughnessParams.diffuseMapResolution[1] = m_greyscaleMap->getHeight();
 		diffuseToRoughnessParams.padding0[0] = 0u;
 		diffuseToRoughnessParams.padding0[1] = 0u;
 
@@ -312,6 +408,23 @@ namespace Ogre
 		m_diffusemapToRoughnessParams->upload( &diffuseToRoughnessParams, 0u,
 											   sizeof( diffuseToRoughnessParams ) );
 		m_diffusemapToRoughnessJob->setConstBuffer( 0u, m_diffusemapToRoughnessParams );
+
+		if( m_greyscaleWorkspace )
+		{
+			HlmsCompute *computeHlms =
+				static_cast<HlmsCompute *>( m_heightmapToNormalJob->getCreator() );
+			HlmsComputeJob *toGreyscaleJob = computeHlms->findComputeJob( "Yangen/ToGreyscale" );
+			ShaderParams &shaderParams = toGreyscaleJob->getShaderParams( "default" );
+			shaderParams.mParams.clear();
+			shaderParams.mParams.push_back( ShaderParams::Param() );
+
+			uint32 resolutionAndIndex[4] = { m_diffuseMap->getWidth(), m_diffuseMap->getHeight(),
+											 m_diffuseMap->getInternalSliceStart(), 0u };
+			shaderParams.mParams.back().name = "resolutionAndIndex";
+			shaderParams.mParams.back().setManualValue( resolutionAndIndex, 4u );
+
+			shaderParams.setDirty();
+		}
 	}
 	//-------------------------------------------------------------------------
 	void YangenManager::setGaussianFilterParams( Ogre::HlmsComputeJob *job, Ogre::uint8 kernelRadius,
@@ -349,6 +462,10 @@ namespace Ogre
 		// Normalize the weights
 		for( uint32 i = 0; i < kernelRadius + 1u; ++i )
 			weights[i] /= fWeightSum;
+
+		// Edge case that leads to NaN. Fix this.
+		if( kernelRadius == 0u )
+			weights[0] = 1.0f;
 
 		// Remove shader constants from previous calls (needed in case we've reduced the radius size)
 		ShaderParams::ParamVec::iterator itor = shaderParams.mParams.begin();

@@ -3,6 +3,9 @@
 
 @insertpiece( PreBindingsHeaderCS )
 
+#define p_diffuseMapResolution	resolutionAndIndex.xy
+#define p_diffuseMapIndex		resolutionAndIndex.z
+
 @insertpiece( HeaderCS )
 
 //in uvec3 gl_NumWorkGroups;
@@ -15,11 +18,11 @@ kernel void main_metal
 (
 	uint3 gl_GlobalInvocationID		[[thread_position_in_grid]]
 
-	, texture2d_array<@insertpiece(uav0_pf_type), access::write> outNormalMap [[texture(UAV_SLOT_START+0)]]
+	, texture2d_array<@insertpiece(uav0_pf_type), access::write> outGreyscaleMap [[texture(UAV_SLOT_START+0)]]
 
-	, texture2d<float> heightMapTex			[[texture(0)]]
+	, texture2d<float> colourMapTex			[[texture(0)]]
 
-	, constant HeightmapToNormalParams &p	[[buffer(CONST_SLOT_START+0)]]
+	, constant uint4 &resolutionAndIndex	[[buffer(PARAMETER_SLOT)]]
 )
 {
 	@insertpiece( BodyCS )

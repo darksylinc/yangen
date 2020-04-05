@@ -7,6 +7,11 @@ layout (@insertpiece(uav0_pf_type)) uniform restrict writeonly image2DArray outG
 
 uniform sampler2DArray colourMapTex;
 
+uniform uint4 resolutionAndIndex;
+
+#define p_diffuseMapResolution	resolutionAndIndex.xy
+#define p_diffuseMapIndex		resolutionAndIndex.z
+
 layout( local_size_x = @value( threads_per_group_x ),
 		local_size_y = @value( threads_per_group_y ),
 		local_size_z = @value( threads_per_group_z ) ) in;

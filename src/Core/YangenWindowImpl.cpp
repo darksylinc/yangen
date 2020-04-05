@@ -356,8 +356,8 @@ void YangenWindowImpl::createSystems()
 	m_materialSwitcher = new Ogre::MaterialSwitcher( m_root->getHlmsManager(), m_yangenManager );
 	try
 	{
-		m_yangenManager->loadFromHeightmap( "Sample04.png",
-											Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+		m_yangenManager->loadFromDiffusemap( "Sample04.png",
+											 Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
 		m_materialSwitcher->prepareMaterials();
 		m_yangenManager->process();
 
@@ -612,7 +612,9 @@ bool YangenWindowImpl::frameStarted( const Ogre::FrameEvent &evt )
 {
 	m_cameraController->update( evt.timeSinceLastFrame, m_camera );
 
+#ifdef DEBUG
 	m_yangenManager->process();
+#endif
 
 	// update statusbar info
 	const Ogre::FrameStats *frameStats = m_root->getFrameStats();
@@ -818,38 +820,91 @@ void YangenWindowImpl::unloadPreview()
 	}
 }
 //-----------------------------------------------------------------------------
+void YangenWindowImpl::loadTexture( const Ogre::String &diffuseFullpath,
+									const Ogre::String &heightmapFullpath )
+{
+	try
+	{
+		if( !diffuseFullpath.empty() && !heightmapFullpath.empty() )
+		{
+			m_yangenManager->loadFromDiffuseAndHeightmap( diffuseFullpath, "Listener Group",
+														  heightmapFullpath, "Listener Group" );
+		}
+		else
+		{
+			if( diffuseFullpath.empty() )
+				m_yangenManager->loadFromHeightmap( heightmapFullpath, "Listener Group" );
+			else
+				m_yangenManager->loadFromDiffusemap( diffuseFullpath, "Listener Group" );
+		}
+		m_materialSwitcher->prepareMaterials();
+		m_yangenManager->process();
+
+		Ogre::TextureGpu *heightmapTex = m_yangenManager->getHeightMap();
+		heightmapTex->waitForMetadata();
+		const float aspectRatio = static_cast<float>( heightmapTex->getWidth() ) /
+								  static_cast<float>( heightmapTex->getHeight() );
+		m_previewSceneNode->setScale( aspectRatio, 1.0f, 1.0f );
+		m_previewSceneNode->_getFullTransformUpdated();
+	}
+	catch( Ogre::Exception &e )
+	{
+		Ogre::LogManager::getSingleton().logMessage( e.getFullDescription() );
+		throw;
+	}
+}
+//-----------------------------------------------------------------------------
+/**
+@brief YangenWindowImpl::stripFilenameFromPath
+	Takes a Windows or UNIX fullpath (e.g. /home/user/filaname.png or C:\Folder\filename.png)
+	and strips the filename from the path (e.g. /home/user and C:\Folder)
+@param inFullpath
+@param outFolder
+*/
+void YangenWindowImpl::stripFilenameFromPath( const wxString &inFullpath, wxString &outFolder )
+{
+	outFolder = inFullpath;
+	const size_t pos = outFolder.find_last_of( "/\\" );
+	outFolder = outFolder.substr( 0, pos );
+}
+//-----------------------------------------------------------------------------
 // loadTextureDialog()
 // Description:
 //	Shows a dialog so the user can choose a file to load
 //-----------------------------------------------------------------------------
-void YangenWindowImpl::loadTextureDialog()
+void YangenWindowImpl::loadTextureDialog( bool bHeightmap )
 {
-	wxFileDialog openFileDialog(
-		this, _( "Open Texture file" ), wxT( "" ) /*wxString( m_lastOpenMeshDir.c_str(),
-												   wxConvUTF8 )*/
-		,
-		wxT( "" ), wxT( "*.png;*.jpg;*.bmp" ), wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition );
+	wxFileDialog openFileDialog( this, _( "Open Texture file" ), m_lastOpenDir, wxT( "" ),
+								 wxT( "*.png;*.jpg;*.bmp" ), wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+								 wxDefaultPosition );
 
 	if( openFileDialog.ShowModal() == wxID_OK )
 	{
-		try
-		{
-			m_yangenManager->loadFromHeightmap( Ogre::String( openFileDialog.GetPath().mb_str() ),
-												"Listener Group" );
-			m_materialSwitcher->prepareMaterials();
-			m_yangenManager->process();
+		stripFilenameFromPath( openFileDialog.GetPath(), m_lastOpenDir );
 
-			Ogre::TextureGpu *heightmapTex = m_yangenManager->getHeightMap();
-			heightmapTex->waitForMetadata();
-			const float aspectRatio = static_cast<float>( heightmapTex->getWidth() ) /
-									  static_cast<float>( heightmapTex->getHeight() );
-			m_previewSceneNode->setScale( aspectRatio, 1.0f, 1.0f );
-			m_previewSceneNode->_getFullTransformUpdated();
-		}
-		catch( Ogre::Exception &e )
+		Ogre::String diffuseFullpath = Ogre::String( openFileDialog.GetPath().mb_str() );
+		Ogre::String heightmapFullpath;
+		if( bHeightmap )
+			diffuseFullpath.swap( heightmapFullpath );
+		loadTexture( diffuseFullpath, heightmapFullpath );
+	}
+}
+//-----------------------------------------------------------------------------
+void YangenWindowImpl::loadTextureDialogBoth()
+{
+	wxFileDialog openFileDialog( this, wxT( "Open DIFFUSE file" ), m_lastOpenDir, wxT( "" ),
+								 wxT( "*.png;*.jpg;*.bmp" ), wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+								 wxDefaultPosition );
+
+	if( openFileDialog.ShowModal() == wxID_OK )
+	{
+		Ogre::String diffuseFullpath = Ogre::String( openFileDialog.GetPath().mb_str() );
+		openFileDialog.SetMessage( wxT( "Open HEIGHTMAP file" ) );
+		if( openFileDialog.ShowModal() == wxID_OK )
 		{
-			Ogre::LogManager::getSingleton().logMessage( e.getFullDescription() );
-			throw;
+			stripFilenameFromPath( openFileDialog.GetPath(), m_lastOpenDir );
+			Ogre::String heightmapFullpath = Ogre::String( openFileDialog.GetPath().mb_str() );
+			loadTexture( diffuseFullpath, heightmapFullpath );
 		}
 	}
 }
@@ -860,11 +915,8 @@ void YangenWindowImpl::loadTextureDialog()
 //-----------------------------------------------------------------------------
 void YangenWindowImpl::saveTextureDialog()
 {
-	wxFileDialog saveFileDialog(
-		this, _( "Save Texture file" ), wxT( "" ) /*wxString( m_lastSaveMeshDir.c_str(),
-												   wxConvUTF8 )*/
-		,
-		wxT( "" ), wxT( "*.png" ), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition );
+	wxFileDialog saveFileDialog( this, _( "Save Texture file" ), m_lastOpenDir, wxT( "" ),
+								 wxT( "*.png" ), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition );
 
 	if( saveFileDialog.ShowModal() == wxID_OK )
 	{
@@ -884,12 +936,17 @@ void YangenWindowImpl::OnMenuSelection( wxCommandEvent &event )
 {
 	switch( event.GetId() )
 	{
-	case wxID_LOADFILE:
-		loadTextureDialog();
+	case wxID_LOAD_DIFFUSE:
+		loadTextureDialog( false );
+		break;
+	case wxID_LOAD_HEIGHTMAP:
+		loadTextureDialog( true );
+		break;
+	case wxID_LOAD_DIFFUSE_AND_HEIGHTMAP:
+		loadTextureDialogBoth();
 		break;
 	case wxID_SAVEFILE:
 		saveTextureDialog();
-		break;
 		break;
 	case wxID_RELOAD_SHADERS:
 	{

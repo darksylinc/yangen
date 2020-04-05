@@ -3,9 +3,14 @@
 
 @insertpiece( PreBindingsHeaderCS )
 
-RWTexture2DArray<@insertpiece(uav0_pf_type)> outNormalMap : register(u0);
+RWTexture2DArray<@insertpiece(uav0_pf_type)> outGreyscaleMap : register(u0);
 
-Texture2DArray heightMapTex : register(t0);
+Texture2DArray colourMapTex : register(t0);
+
+uniform uint4 resolutionAndIndex;
+
+#define p_diffuseMapResolution	resolutionAndIndex.xy
+#define p_diffuseMapIndex		resolutionAndIndex.z
 
 @insertpiece( HeaderCS )
 

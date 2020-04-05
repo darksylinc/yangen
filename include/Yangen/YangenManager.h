@@ -15,7 +15,6 @@
 
 namespace Ogre
 {
-
 	class YangenManager : public CompositorWorkspaceListener
 	{
 		String m_texName;
@@ -92,11 +91,29 @@ namespace Ogre
 					   SceneManager *sceneManager );
 		virtual ~YangenManager();
 
-		/** Loads from a heightmap. Assumes the heightmap is also the diffuse map (greyscale)
+		/** Loads from a diffuse. Generates the heightmap from the diffuse map
+		@param filename
+		@param resourceGroup
+		*/
+		void loadFromDiffusemap( const String &filename, const String &resourceGroup );
+
+		/** Loads from a heightmap.
+			Assumes there is no diffuse map, and the heightmap
+			is also used to create the roughness map
 		@param filename
 		@param resourceGroup
 		*/
 		void loadFromHeightmap( const String &filename, const String &resourceGroup );
+
+		/** Loads from a diffuse and heightmap.
+			Roughness is calculated from diffuse. Normals from heightmap
+		@param diffuseName
+		@param diffuseResourceGroup
+		@param heightName
+		@param heightResourceGroup
+		*/
+		void loadFromDiffuseAndHeightmap( const String &diffuseName, const String &diffuseResourceGroup,
+										  const String &heightName, const String &heightResourceGroup );
 
 		void process();
 

@@ -32,11 +32,13 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-#define wxID_LOADFILE 1000
-#define wxID_SAVEFILE 1001
-#define wxID_RELOAD_SHADERS 1002
-#define wxID_EROSION_SLIDER 1003
-#define wxID_EROSION_CTRL 1004
+#define wxID_LOAD_DIFFUSE 1000
+#define wxID_LOAD_HEIGHTMAP 1001
+#define wxID_LOAD_DIFFUSE_AND_HEIGHTMAP 1002
+#define wxID_SAVEFILE 1003
+#define wxID_RELOAD_SHADERS 1004
+#define wxID_EROSION_SLIDER 1005
+#define wxID_EROSION_CTRL 1006
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class YangenWindow
