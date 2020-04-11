@@ -96,12 +96,16 @@ class YangenWindowImpl : public YangenWindow,
 	void unloadPreview();
 
 	void loadTexture( const Ogre::String &diffuseFullpath, const Ogre::String &heightmapFullpath );
+	void saveTexture( const Ogre::String &fullpath, Ogre::TextureGpu *texToSave );
 
 	void stripFilenameFromPath( const wxString &inFullpath, wxString &outFolder );
+	void splitFilenameAndFolderFromPath( const wxString &inFullpath, wxString &outFolder,
+										 wxString &outFilename );
 
 	void loadTextureDialog( bool bHeightmap );
 	void loadTextureDialogBoth();
-	void saveTextureDialog();
+	void saveTextureDialog( bool bSavingNormalmap );
+	void saveAllTexturesDialog();
 
 	// Virtual event handlers, overide them in your derived class
 	virtual void OnMenuSelection( wxCommandEvent &event );

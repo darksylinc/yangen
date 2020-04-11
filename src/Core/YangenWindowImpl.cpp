@@ -19,6 +19,7 @@
 
 #include "OgreException.h"
 #include "OgreFrameStats.h"
+#include "OgreImage2.h"
 #include "OgreMesh2.h"
 #include "OgreMeshManager2.h"
 #include "OgreResourceGroupManager.h"
@@ -854,6 +855,23 @@ void YangenWindowImpl::loadTexture( const Ogre::String &diffuseFullpath,
 	}
 }
 //-----------------------------------------------------------------------------
+void YangenWindowImpl::saveTexture( const Ogre::String &fullpath, Ogre::TextureGpu *texToSave )
+{
+	try
+	{
+		Ogre::Image2 image;
+		image.convertFromTexture( texToSave, 0u, 0u );
+		/*image._setAutoDelete( false );
+		image.loadDynamicImage();*/
+		image.save( fullpath, 0u, 1u );
+	}
+	catch( Ogre::Exception &e )
+	{
+		Ogre::LogManager::getSingleton().logMessage( e.getFullDescription() );
+		throw;
+	}
+}
+//-----------------------------------------------------------------------------
 /**
 @brief YangenWindowImpl::stripFilenameFromPath
 	Takes a Windows or UNIX fullpath (e.g. /home/user/filaname.png or C:\Folder\filename.png)
@@ -863,9 +881,27 @@ void YangenWindowImpl::loadTexture( const Ogre::String &diffuseFullpath,
 */
 void YangenWindowImpl::stripFilenameFromPath( const wxString &inFullpath, wxString &outFolder )
 {
-	outFolder = inFullpath;
 	const size_t pos = outFolder.find_last_of( "/\\" );
-	outFolder = outFolder.substr( 0, pos );
+	outFolder = inFullpath.substr( 0, pos );
+}
+//-----------------------------------------------------------------------------
+/**
+@brief YangenWindowImpl::splitFilenameAndFolderFromPath
+	Takes a Windows or UNIX fullpath (e.g. /home/user/filaname.png or C:\Folder\filename.png)
+	and splits the filename & folder from the path
+	(e.g. outFolder = /home/user or C:\Folder and outFilename = filename.png)
+@param inFullpath
+@param outFolder
+@param outFilename
+*/
+void YangenWindowImpl::splitFilenameAndFolderFromPath( const wxString &inFullpath, wxString &outFolder,
+													   wxString &outFilename )
+{
+	assert( &inFullpath != &outFolder );
+	assert( &inFullpath != &outFilename );
+	const size_t pos = inFullpath.find_last_of( "/\\" );
+	outFolder = inFullpath.substr( 0, pos );
+	outFilename = inFullpath.substr( pos + 1u );
 }
 //-----------------------------------------------------------------------------
 // loadTextureDialog()
@@ -913,7 +949,28 @@ void YangenWindowImpl::loadTextureDialogBoth()
 // Description:
 //	Shows a dialog so the user can choose a file to load
 //-----------------------------------------------------------------------------
-void YangenWindowImpl::saveTextureDialog()
+void YangenWindowImpl::saveTextureDialog( bool bSavingNormalmap )
+{
+	wxFileDialog saveFileDialog( this, _( "Save Texture file" ), m_lastOpenDir, wxT( "" ),
+								 wxT( "*.png" ), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition );
+
+	if( saveFileDialog.ShowModal() == wxID_OK )
+	{
+		stripFilenameFromPath( saveFileDialog.GetPath(), m_lastOpenDir );
+
+		const Ogre::String fullpath = Ogre::String( saveFileDialog.GetPath().mb_str() );
+
+		Ogre::TextureGpu *texToSave =
+			bSavingNormalmap ? m_yangenManager->getNormalMap() : m_yangenManager->getRoughnessMap();
+		saveTexture( fullpath, texToSave );
+	}
+}
+//-----------------------------------------------------------------------------
+// saveTextureDialog()
+// Description:
+//	Shows a dialog so the user can choose a file to load
+//-----------------------------------------------------------------------------
+void YangenWindowImpl::saveAllTexturesDialog()
 {
 	wxFileDialog saveFileDialog( this, _( "Save Texture file" ), m_lastOpenDir, wxT( "" ),
 								 wxT( "*.png" ), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition );
@@ -921,10 +978,32 @@ void YangenWindowImpl::saveTextureDialog()
 	if( saveFileDialog.ShowModal() == wxID_OK )
 	{
 		wxString fullPath = saveFileDialog.GetPath();
-		if( fullPath.find( wxT( ".png" ) ) != fullPath.size() - 6u )
-			fullPath += wxT( ".png" );
 
-		// saveTexture( std::string( fullPath.mb_str() ) );
+		wxString filename, extension;
+		splitFilenameAndFolderFromPath( saveFileDialog.GetPath(), m_lastOpenDir, filename );
+
+		{
+			size_t pos = filename.find_last_of( '.' );
+			if( pos == wxString::npos )
+			{
+				filename += ".png";
+				pos = filename.find_last_of( '.' );
+			}
+			extension = filename.substr( pos );
+			filename = filename.substr( 0u, pos );
+		}
+
+		wxString finalPath = m_lastOpenDir + "/" + filename;
+
+		const size_t beforeExtension = finalPath.size();
+
+		finalPath.resize( beforeExtension );
+		finalPath += "_nm" + extension;
+		saveTexture( std::string( finalPath.mb_str() ), m_yangenManager->getNormalMap() );
+
+		finalPath.resize( beforeExtension );
+		finalPath += "_roughness" + extension;
+		saveTexture( std::string( finalPath.mb_str() ), m_yangenManager->getRoughnessMap() );
 	}
 }
 //-----------------------------------------------------------------------------
@@ -946,7 +1025,13 @@ void YangenWindowImpl::OnMenuSelection( wxCommandEvent &event )
 		loadTextureDialogBoth();
 		break;
 	case wxID_SAVEFILE:
-		saveTextureDialog();
+		saveAllTexturesDialog();
+		break;
+	case wxID_SAVE_NORMAL_MAP:
+		saveTextureDialog( true );
+		break;
+	case wxID_SAVE_ROUGHNESS_MAP:
+		saveTextureDialog( false );
 		break;
 	case wxID_RELOAD_SHADERS:
 	{

@@ -36,9 +36,11 @@
 #define wxID_LOAD_HEIGHTMAP 1001
 #define wxID_LOAD_DIFFUSE_AND_HEIGHTMAP 1002
 #define wxID_SAVEFILE 1003
-#define wxID_RELOAD_SHADERS 1004
-#define wxID_EROSION_SLIDER 1005
-#define wxID_EROSION_CTRL 1006
+#define wxID_SAVE_NORMAL_MAP 1004
+#define wxID_SAVE_ROUGHNESS_MAP 1005
+#define wxID_RELOAD_SHADERS 1006
+#define wxID_EROSION_SLIDER 1007
+#define wxID_EROSION_CTRL 1008
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class YangenWindow
