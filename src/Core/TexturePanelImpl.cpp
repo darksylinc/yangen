@@ -153,6 +153,38 @@ void TexturePanelImpl::fillPresetsMap()
 	preset.roughnessExponent = 0.240000f;
 
 	m_presets.push_back( NamedPreset( "Bricks (Clean heightmap)", preset ) );
+
+	preset.nmStrength[0] = 7.200000f;
+	preset.nmSteepness[0] = 0.800000f;
+	preset.nmStrength[1] = 11.200000f;
+	preset.nmSteepness[1] = 4.600000f;
+	preset.nmStrength[2] = 0.000000f;
+	preset.nmSteepness[2] = 0.000000f;
+	preset.nmRadius[0] = 14u;
+	preset.nmRadius[1] = 2u;
+	preset.roughnessBlurOffset = 2u;
+	preset.roughnessBlurAmplitude = 20u;
+	preset.roughnessMidpoint = 0.500000f;
+	preset.roughnessScale = 1.520000f;
+	preset.roughnessExponent = 0.620000f;
+
+	m_presets.push_back( NamedPreset( "Bricks (Noisy diffuse)", preset ) );
+
+	preset.nmStrength[0] = 2.400000f;
+	preset.nmSteepness[0] = 0.800000f;
+	preset.nmStrength[1] = 3.200000f;
+	preset.nmSteepness[1] = 4.600000f;
+	preset.nmStrength[2] = 0.000000f;
+	preset.nmSteepness[2] = 0.000000f;
+	preset.nmRadius[0] = 14u;
+	preset.nmRadius[1] = 2u;
+	preset.roughnessBlurOffset = 2u;
+	preset.roughnessBlurAmplitude = 20u;
+	preset.roughnessMidpoint = 0.560000f;
+	preset.roughnessScale = 1.520000f;
+	preset.roughnessExponent = 0.620000f;
+
+	m_presets.push_back( NamedPreset( "Marble tile", preset ) );
 }
 //-----------------------------------------------------------------------------
 void TexturePanelImpl::saveCustomPreset()
@@ -342,6 +374,8 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 {
 	if( mInitializing )
 		return;
+
+	saveCustomPreset();
 
 	const size_t c_numStrengthTextCtrls = 3u;
 	wxTextCtrl *nmStrengthTextCtrls[c_numStrengthTextCtrls] = { m_normalMapDepth0TextCtrl,
