@@ -53,9 +53,10 @@ protected:
 	float getValueFrom( wxTextCtrl *textCtrl, float defaultValue ) const;
 
 	// Handlers for PcgPanel events.
-	void OnScroll( wxScrollEvent &event );
-	void OnCheckBox( wxCommandEvent &event );
-	void OnText( wxCommandEvent &event );
+	virtual void OnScroll( wxScrollEvent &event );
+	void         OnCheckBox( wxCommandEvent &event );
+	virtual void OnText( wxCommandEvent &event );
+	virtual void OnButtonClick( wxCommandEvent &event );
 
 	void valueUpdated( wxTextCtrl *textCtrl );
 
@@ -64,6 +65,8 @@ public:
 	TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yangenManager );
 	~TexturePanelImpl();
 	//// end generated class members
+
+	void dumpPresetToClipboard();
 
 	wxScrolledWindow *getScrolledWindow() const { return m_scrolledWindow2; }
 };

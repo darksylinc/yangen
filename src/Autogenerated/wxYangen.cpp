@@ -44,6 +44,12 @@ YangenWindow::YangenWindow( wxWindow* parent, wxWindowID id, const wxString& tit
 
 	m_fileMenu->AppendSeparator();
 
+	wxMenuItem* m_saveMenuItem21;
+	m_saveMenuItem21 = new wxMenuItem( m_fileMenu, wxID_COPY_PRESET, wxString( wxT("&Copy Preset") ) + wxT('\t') + wxT("Ctrl+P"), wxT("Copies preset to clipboard"), wxITEM_NORMAL );
+	m_fileMenu->Append( m_saveMenuItem21 );
+
+	m_fileMenu->AppendSeparator();
+
 	wxMenuItem* m_reloadShadersMenuItem;
 	m_reloadShadersMenuItem = new wxMenuItem( m_fileMenu, wxID_RELOAD_SHADERS, wxString( wxT("&Reload Shaders") ) + wxT('\t') + wxT("F5"), wxEmptyString, wxITEM_NORMAL );
 	m_fileMenu->Append( m_reloadShadersMenuItem );
@@ -62,6 +68,7 @@ YangenWindow::YangenWindow( wxWindow* parent, wxWindowID id, const wxString& tit
 	m_fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( YangenWindow::OnMenuSelection ), this, m_saveMenuItem->GetId());
 	m_fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( YangenWindow::OnMenuSelection ), this, m_saveMenuItem1->GetId());
 	m_fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( YangenWindow::OnMenuSelection ), this, m_saveMenuItem2->GetId());
+	m_fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( YangenWindow::OnMenuSelection ), this, m_saveMenuItem21->GetId());
 	m_fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( YangenWindow::OnMenuSelection ), this, m_reloadShadersMenuItem->GetId());
 }
 
@@ -79,15 +86,6 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_scrolledWindow2 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_scrolledWindow2->SetScrollRate( 5, 5 );
 	m_bSizer2 = new wxBoxSizer( wxVERTICAL );
-
-	wxBoxSizer* bSizer7;
-	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_button7 = new wxButton( m_scrolledWindow2, wxID_ANY, wxT("Open File"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_button7, 0, wxALL, 5 );
-
-
-	m_bSizer2->Add( bSizer7, 0, 0, 5 );
 
 	wxStaticBoxSizer* Small;
 	Small = new wxStaticBoxSizer( new wxStaticBox( m_scrolledWindow2, wxID_ANY, wxT("Small Details") ), wxVERTICAL );
@@ -441,6 +439,20 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 
 	m_bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
+
+
+	bSizer7->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_copyPresetButton = new wxButton( m_scrolledWindow2, wxID_ANY, wxT("Copy Preset"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_copyPresetButton->SetHelpText( wxT("Copies preset to clipboard") );
+
+	bSizer7->Add( m_copyPresetButton, 0, wxALL, 5 );
+
+
+	m_bSizer2->Add( bSizer7, 0, wxEXPAND, 5 );
+
 
 	m_scrolledWindow2->SetSizer( m_bSizer2 );
 	m_scrolledWindow2->Layout();
@@ -582,6 +594,7 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_copyPresetButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TexturePanel::OnButtonClick ), NULL, this );
 }
 
 TexturePanel::~TexturePanel()
@@ -717,6 +730,7 @@ TexturePanel::~TexturePanel()
 	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_copyPresetButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TexturePanel::OnButtonClick ), NULL, this );
 
 }
 

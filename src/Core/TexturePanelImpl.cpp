@@ -15,9 +15,10 @@
 #include "OgreHlmsManager.h"
 #include "OgreRoot.h"
 
+#include "Core/EmptyLwString.h"
 #include "OgreLwString.h"
 
-#include <wx/colordlg.h>
+#include <wx/clipbrd.h>
 
 TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yangenManager ) :
 	TexturePanel( parent ),
@@ -26,13 +27,13 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 {
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapDepth0Slider, m_normalMapDepth0TextCtrl, -20.0f, 20.0f ),
-		m_yangenManager->getHeightMapToNormalMapStrength( 0u ) );
+		m_yangenManager->getNormalMapStrength( 0u ) );
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapDepth1Slider, m_normalMapDepth1TextCtrl, -20.0f, 20.0f ),
-		m_yangenManager->getHeightMapToNormalMapStrength( 1u ) );
+		m_yangenManager->getNormalMapStrength( 1u ) );
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapDepth2Slider, m_normalMapDepth2TextCtrl, -20.0f, 20.0f ),
-		m_yangenManager->getHeightMapToNormalMapStrength( 2u ) );
+		m_yangenManager->getNormalMapStrength( 2u ) );
 
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapRadius1Slider, m_normalMapRadius1TextCtrl, 2.0f, 64.0f, true ),
@@ -201,6 +202,13 @@ void TexturePanelImpl::OnText( wxCommandEvent &event )
 	}
 }
 //-----------------------------------------------------------------------------
+void TexturePanelImpl::OnButtonClick( wxCommandEvent &event )
+{
+	wxButton *button = static_cast<wxButton *>( event.GetEventObject() );
+	if( button == m_copyPresetButton )
+		dumpPresetToClipboard();
+}
+//-----------------------------------------------------------------------------
 void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 {
 	if( mInitializing )
@@ -224,7 +232,7 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 	{
 		if( textCtrl == nmStrengthTextCtrls[i] )
 		{
-			m_yangenManager->setHeightMapToNormalMapStrength( getValueFrom( textCtrl, 1.0f ), i );
+			m_yangenManager->setNormalMapStrength( getValueFrom( textCtrl, 1.0f ), i );
 			m_yangenManager->process();
 			return;
 		}
@@ -288,5 +296,38 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 		m_yangenManager->setRoughnessExponent( getValueFrom( textCtrl, 1.0f ) );
 		m_yangenManager->process();
 		return;
+	}
+}
+//-----------------------------------------------------------------------------
+void TexturePanelImpl::dumpPresetToClipboard()
+{
+	EmptyLwString<2048> dumpStr;
+
+	dumpStr.a( "YangenManager::Preset preset;\n" );
+
+	for( uint8_t i = 0u; i < 3u; ++i )
+	{
+		dumpStr.a( "preset.nmStrength[", i, "] = ", m_yangenManager->getNormalMapStrength( i ), ";\n" );
+		dumpStr.a( "preset.nmSteepness[", i, "] = ", m_yangenManager->getNormalMapSteepness( i ),
+				   ";\n" );
+	}
+	for( uint8_t i = 0u; i < 2u; ++i )
+	{
+		dumpStr.a( "preset.nmRadius[", i,
+				   "] = ", m_yangenManager->getHeightMapToNormalMapRadius( i + 1u ), "u;\n" );
+	}
+
+	dumpStr.a( "preset.roughnessBlurOffset = ", m_yangenManager->getRoughnessBlurOffset(), "u;\n" );
+	dumpStr.a( "preset.roughnessAmplitude = ", m_yangenManager->getRoughnessBlurAmplitude(), "u;\n" );
+	dumpStr.a( "preset.roughnessMidpoint = ", m_yangenManager->getRoughnessMidpoint(), ";\n" );
+	dumpStr.a( "preset.roughnessScale = ", m_yangenManager->getRoughnessScale(), ";\n" );
+	dumpStr.a( "preset.roughnessExponent = ", m_yangenManager->getRoughnessExponent(), ";\n" );
+
+	wxClipboard *clip = wxClipboard::Get();
+	if( clip->Open() )
+	{
+		wxTheClipboard->SetData( new wxTextDataObject( wxString( dumpStr.c_str() ) ) );
+		clip->Flush();
+		clip->Close();
 	}
 }

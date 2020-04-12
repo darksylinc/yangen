@@ -1033,6 +1033,9 @@ void YangenWindowImpl::OnMenuSelection( wxCommandEvent &event )
 	case wxID_SAVE_ROUGHNESS_MAP:
 		saveTextureDialog( false );
 		break;
+	case wxID_COPY_PRESET:
+		m_texturePanelImpl->dumpPresetToClipboard();
+		break;
 	case wxID_RELOAD_SHADERS:
 	{
 		Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
@@ -1047,4 +1050,29 @@ void YangenWindowImpl::OnMenuSelection( wxCommandEvent &event )
 		event.Skip();
 		break;
 	}
+
+	/*7.0f, 0.8f,
+	20.0f, 13u, 4.6f,
+	0, 1u, 0.0,
+
+	2u, 15u,
+	0.42f, -0.32, 0.24*/
+
+	struct YangenPreset
+	{
+		float nmStrength[3];
+		float nmSteepness[3];
+		uint8_t nmRadius[2];
+
+		uint8_t roughnessBlurOffset;
+		uint8_t roughnessAmplitude;
+		float roughnessMidpoint;
+		float roughnessScale;
+		float roughnessExponent;
+	};
+
+	/*YangenPreset preset;
+
+	preset.nmStrength[%i] = %f;
+	preset.nmSteepness[%i] = %f;*/
 }

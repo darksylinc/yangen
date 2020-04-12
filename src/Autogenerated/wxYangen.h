@@ -20,12 +20,12 @@
 #include <wx/icon.h>
 #include <wx/menu.h>
 #include <wx/frame.h>
-#include <wx/button.h>
-#include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/sizer.h>
 #include <wx/slider.h>
 #include <wx/textctrl.h>
 #include <wx/statbox.h>
+#include <wx/button.h>
 #include <wx/scrolwin.h>
 #include <wx/panel.h>
 #include <wx/choice.h>
@@ -38,9 +38,10 @@
 #define wxID_SAVEFILE 1003
 #define wxID_SAVE_NORMAL_MAP 1004
 #define wxID_SAVE_ROUGHNESS_MAP 1005
-#define wxID_RELOAD_SHADERS 1006
-#define wxID_EROSION_SLIDER 1007
-#define wxID_EROSION_CTRL 1008
+#define wxID_COPY_PRESET 1006
+#define wxID_RELOAD_SHADERS 1007
+#define wxID_EROSION_SLIDER 1008
+#define wxID_EROSION_CTRL 1009
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class YangenWindow
@@ -76,7 +77,6 @@ class TexturePanel : public wxPanel
 	protected:
 		wxScrolledWindow* m_scrolledWindow2;
 		wxBoxSizer* m_bSizer2;
-		wxButton* m_button7;
 		wxStaticText* m_staticText7;
 		wxSlider* m_normalMapDepth0Slider;
 		wxTextCtrl* m_normalMapDepth0TextCtrl;
@@ -116,10 +116,12 @@ class TexturePanel : public wxPanel
 		wxStaticText* m_staticText7311111;
 		wxSlider* m_roughnessExponentSlider;
 		wxTextCtrl* m_roughnessExponentTextCtrl;
+		wxButton* m_copyPresetButton;
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnScroll( wxScrollEvent& event ) { event.Skip(); }
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
