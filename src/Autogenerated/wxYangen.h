@@ -25,10 +25,10 @@
 #include <wx/slider.h>
 #include <wx/textctrl.h>
 #include <wx/statbox.h>
+#include <wx/choice.h>
 #include <wx/button.h>
 #include <wx/scrolwin.h>
 #include <wx/panel.h>
-#include <wx/choice.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -116,11 +116,14 @@ class TexturePanel : public wxPanel
 		wxStaticText* m_staticText7311111;
 		wxSlider* m_roughnessExponentSlider;
 		wxTextCtrl* m_roughnessExponentTextCtrl;
+		wxStaticText* m_staticText14;
+		wxChoice* m_presetChoice;
 		wxButton* m_copyPresetButton;
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnScroll( wxScrollEvent& event ) { event.Skip(); }
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 
 

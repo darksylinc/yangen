@@ -442,11 +442,20 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 
+	m_staticText14 = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Preset:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText14->Wrap( -1 );
+	bSizer7->Add( m_staticText14, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxArrayString m_presetChoiceChoices;
+	m_presetChoice = new wxChoice( m_scrolledWindow2, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_presetChoiceChoices, 0 );
+	m_presetChoice->SetSelection( 0 );
+	bSizer7->Add( m_presetChoice, 3, wxALL, 5 );
+
 
 	bSizer7->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	m_copyPresetButton = new wxButton( m_scrolledWindow2, wxID_ANY, wxT("Copy Preset"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_copyPresetButton->SetHelpText( wxT("Copies preset to clipboard") );
+	m_copyPresetButton->SetToolTip( wxT("Copies preset to clipboard") );
 
 	bSizer7->Add( m_copyPresetButton, 0, wxALL, 5 );
 
@@ -594,6 +603,7 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_presetChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( TexturePanel::OnChoice ), NULL, this );
 	m_copyPresetButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TexturePanel::OnButtonClick ), NULL, this );
 }
 
@@ -730,6 +740,7 @@ TexturePanel::~TexturePanel()
 	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_presetChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( TexturePanel::OnChoice ), NULL, this );
 	m_copyPresetButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TexturePanel::OnButtonClick ), NULL, this );
 
 }
