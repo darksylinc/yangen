@@ -32,6 +32,7 @@ TexturePanelImpl::NamedPreset::NamedPreset( const wxString &_name,
 TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yangenManager ) :
 	TexturePanel( parent ),
 	mInitializing( true ),
+	m_isInCustomPreset( true ),
 	m_yangenManager( yangenManager )
 {
 	mapSliderAndTextCtrl(
@@ -78,7 +79,7 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 		new ConvertScaled( m_roughnessExponentSlider, m_roughnessExponentTextCtrl, 0.0f, 2.0f ),
 		m_yangenManager->getRoughnessExponent() );
 
-	fillPresets();
+	fillPresetsMap();
 
 	std::vector<NamedPreset>::const_iterator itor = m_presets.begin();
 	std::vector<NamedPreset>::const_iterator endt = m_presets.end();
@@ -88,6 +89,8 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 		m_presetChoice->Append( itor->name );
 		++itor;
 	}
+
+	m_presetChoice->SetSelection( 0 );
 
 	mInitializing = false;
 }
@@ -129,25 +132,11 @@ TexturePanelImpl::~TexturePanelImpl()
 	}
 }
 //-----------------------------------------------------------------------------
-void TexturePanelImpl::fillPresets()
+void TexturePanelImpl::fillPresetsMap()
 {
+	saveCustomPreset();
+
 	Ogre::YangenManager::Preset preset;
-
-	preset.nmStrength[0] = 27.000000f;
-	preset.nmSteepness[0] = 0.800000f;
-	preset.nmStrength[1] = 20.000000f;
-	preset.nmSteepness[1] = 4.600000f;
-	preset.nmStrength[2] = 0.000000f;
-	preset.nmSteepness[2] = 0.000000f;
-	preset.nmRadius[0] = 14u;
-	preset.nmRadius[1] = 2u;
-	preset.roughnessBlurOffset = 2u;
-	preset.roughnessBlurAmplitude = 16u;
-	preset.roughnessMidpoint = 0.420000f;
-	preset.roughnessScale = -0.320000f;
-	preset.roughnessExponent = 0.240000f;
-
-	m_presets.push_back( NamedPreset( "Custom", preset ) );
 
 	preset.nmStrength[0] = 7.000000f;
 	preset.nmSteepness[0] = 0.800000f;
@@ -164,6 +153,29 @@ void TexturePanelImpl::fillPresets()
 	preset.roughnessExponent = 0.240000f;
 
 	m_presets.push_back( NamedPreset( "Bricks (Clean heightmap)", preset ) );
+}
+//-----------------------------------------------------------------------------
+void TexturePanelImpl::saveCustomPreset()
+{
+	Ogre::YangenManager::Preset preset;
+
+	const size_t c_numStrengthTextCtrls = 3u;
+	const size_t c_numNmRadiusTextCtrls = 2u;
+	for( uint8_t i = 0u; i < c_numStrengthTextCtrls; ++i )
+	{
+		preset.nmStrength[i] = m_yangenManager->getNormalMapStrength( i );
+		preset.nmSteepness[i] = m_yangenManager->getNormalMapSteepness( i );
+	}
+	for( uint8_t i = 0u; i < c_numNmRadiusTextCtrls; ++i )
+		preset.nmRadius[i] = m_yangenManager->getHeightMapToNormalMapRadius( i + 1u );
+
+	preset.roughnessBlurOffset = m_yangenManager->getRoughnessBlurOffset();
+	preset.roughnessBlurAmplitude = m_yangenManager->getRoughnessBlurAmplitude();
+	preset.roughnessMidpoint = m_yangenManager->getRoughnessMidpoint();
+	preset.roughnessScale = m_yangenManager->getRoughnessScale();
+	preset.roughnessExponent = m_yangenManager->getRoughnessExponent();
+
+	m_presets.push_back( NamedPreset( "Custom", preset ) );
 }
 //-----------------------------------------------------------------------------
 void TexturePanelImpl::mapSliderAndTextCtrl( ConversionBase *converter )
@@ -261,11 +273,19 @@ void TexturePanelImpl::OnText( wxCommandEvent &event )
 //-----------------------------------------------------------------------------
 void TexturePanelImpl::OnChoice( wxCommandEvent &event )
 {
+	if( mInitializing )
+		return;
+
 	wxChoice *choice = static_cast<wxChoice *>( event.GetEventObject() );
 	const size_t selection = static_cast<size_t>( choice->GetSelection() );
 
 	if( choice == m_presetChoice && selection < m_presets.size() )
 	{
+		if( m_isInCustomPreset )
+			saveCustomPreset();
+
+		m_isInCustomPreset = selection == 0u;
+
 		const Ogre::YangenManager::Preset &preset = m_presets[selection].preset;
 
 		// Suspend notifications (otherwise each setting being changed will trigger a rebuild)
@@ -288,14 +308,11 @@ void TexturePanelImpl::OnChoice( wxCommandEvent &event )
 		{
 			nmStrengthTextCtrls[i]->SetValue(
 				wxString::Format( wxT( "%.05lf" ), preset.nmStrength[i] ) );
-		}
-		for( uint8_t i = 0u; i < c_numNmRadiusTextCtrls; ++i )
-			nmRadiusTextCtrls[i]->SetValue( wxString::Format( wxT( "%u" ), preset.nmRadius[i] ) );
-		for( uint8_t i = 0u; i < c_numNmSteepnessTextCtrls; ++i )
-		{
 			nmSteepnessTextCtrls[i]->SetValue(
 				wxString::Format( wxT( "%.05lf" ), preset.nmSteepness[i] ) );
 		}
+		for( uint8_t i = 0u; i < c_numNmRadiusTextCtrls; ++i )
+			nmRadiusTextCtrls[i]->SetValue( wxString::Format( wxT( "%u" ), preset.nmRadius[i] ) );
 
 		m_roughnessBlurOffsetTextCtrl->SetValue(
 			wxString::Format( wxT( "%u" ), preset.roughnessBlurOffset ) );

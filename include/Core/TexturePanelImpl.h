@@ -45,6 +45,7 @@ protected:
 	};
 
 	bool mInitializing;
+	bool m_isInCustomPreset;
 
 	std::map<wxSlider *, ConversionBase *>   m_sliderToTextCtrlMap;
 	std::map<wxTextCtrl *, ConversionBase *> m_textCtrlToSliderMap;
@@ -55,7 +56,8 @@ protected:
 
 	Ogre::YangenManager *m_yangenManager;
 
-	void fillPresets();
+	void fillPresetsMap();
+	void saveCustomPreset();
 
 	void mapSliderAndTextCtrl( ConversionBase *converter );
 	void mapSliderAndTextCtrl( ConversionBase *converter, float newDefault, bool bSetDefault = true );
