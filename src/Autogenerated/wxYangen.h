@@ -116,6 +116,9 @@ class TexturePanel : public wxPanel
 		wxStaticText* m_staticText7311111;
 		wxSlider* m_roughnessExponentSlider;
 		wxTextCtrl* m_roughnessExponentTextCtrl;
+		wxStaticText* m_staticText71111;
+		wxSlider* m_fresnelSlider;
+		wxTextCtrl* m_fresnelTextCtrl;
 		wxStaticText* m_staticText14;
 		wxChoice* m_presetChoice;
 		wxButton* m_copyPresetButton;

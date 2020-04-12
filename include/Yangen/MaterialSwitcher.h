@@ -11,6 +11,7 @@
 namespace Ogre
 {
 	class YangenManager;
+	class HlmsPbsDatablock;
 
 	namespace YangenVisualizationModes
 	{
@@ -35,6 +36,7 @@ namespace Ogre
 
 		void prepareMaterials();
 
-		HlmsDatablock *getDatablock( YangenVisualizationModes::YangenVisualizationModes mode ) const;
+		HlmsDatablock *   getDatablock( YangenVisualizationModes::YangenVisualizationModes mode ) const;
+		HlmsPbsDatablock *getFinalRenderDatablock() const;
 	};
 }  // namespace Ogre

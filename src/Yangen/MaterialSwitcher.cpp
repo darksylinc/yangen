@@ -83,4 +83,10 @@ namespace Ogre
 	{
 		return m_datablocks[mode];
 	}
+	//-------------------------------------------------------------------------
+	HlmsPbsDatablock *MaterialSwitcher::getFinalRenderDatablock() const
+	{
+		return static_cast<Ogre::HlmsPbsDatablock *>(
+			m_datablocks[YangenVisualizationModes::FinalRender] );
+	}
 }  // namespace Ogre

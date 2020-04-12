@@ -439,6 +439,46 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 
 	m_bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 
+	wxStaticBoxSizer* sbSizer41;
+	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( m_scrolledWindow2, wxID_ANY, wxT("Material") ), wxVERTICAL );
+
+	wxFlexGridSizer* fgSizer711;
+	fgSizer711 = new wxFlexGridSizer( 0, 3, 0, 0 );
+	fgSizer711->AddGrowableCol( 1 );
+	fgSizer711->SetFlexibleDirection( wxBOTH );
+	fgSizer711->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxBoxSizer* bSizer151111;
+	bSizer151111 = new wxBoxSizer( wxVERTICAL );
+
+
+	bSizer151111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_staticText71111 = new wxStaticText( sbSizer41->GetStaticBox(), wxID_ANY, wxT("Fresnel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText71111->Wrap( -1 );
+	bSizer151111->Add( m_staticText71111, 0, wxALL, 5 );
+
+
+	bSizer151111->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer711->Add( bSizer151111, 1, wxEXPAND, 5 );
+
+	m_fresnelSlider = new wxSlider( sbSizer41->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	fgSizer711->Add( m_fresnelSlider, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_fresnelTextCtrl = new wxTextCtrl( sbSizer41->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer711->Add( m_fresnelTextCtrl, 0, wxALL, 5 );
+
+
+	sbSizer41->Add( fgSizer711, 1, wxEXPAND, 5 );
+
+
+	m_bSizer2->Add( sbSizer41, 0, wxEXPAND, 5 );
+
+
+	m_bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
+
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -603,6 +643,16 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
 	m_presetChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( TexturePanel::OnChoice ), NULL, this );
 	m_copyPresetButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TexturePanel::OnButtonClick ), NULL, this );
 }
@@ -740,6 +790,16 @@ TexturePanel::~TexturePanel()
 	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
 	m_roughnessExponentTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( TexturePanel::OnScroll ), NULL, this );
+	m_fresnelTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TexturePanel::OnText ), NULL, this );
 	m_presetChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( TexturePanel::OnChoice ), NULL, this );
 	m_copyPresetButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TexturePanel::OnButtonClick ), NULL, this );
 

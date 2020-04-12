@@ -156,7 +156,7 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 	m_mainNotebook = new wxAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
 										wxAUI_NB_BOTTOM | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE |
 											wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_TAB_EXTERNAL_MOVE );
-	m_texturePanelImpl = new TexturePanelImpl( this, m_yangenManager );
+	m_texturePanelImpl = new TexturePanelImpl( this, m_yangenManager, m_materialSwitcher );
 	m_visualizationPanelImpl = new VisualizationPanelImpl( this );
 
 	m_mainNotebook->AddPage( m_texturePanelImpl, wxT( "Normal Map" ) );

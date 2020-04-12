@@ -8,12 +8,10 @@
 
 #include "Core/YangenWindowImpl.h"
 
+#include "Yangen/MaterialSwitcher.h"
 #include "Yangen/YangenManager.h"
 
-#include "OgreGpuProgramManager.h"
-#include "OgreHlms.h"
-#include "OgreHlmsManager.h"
-#include "OgreRoot.h"
+#include "OgreHlmsPbsDatablock.h"
 
 #include "Core/EmptyLwString.h"
 #include "OgreLwString.h"
@@ -21,19 +19,23 @@
 #include <wx/clipbrd.h>
 
 TexturePanelImpl::NamedPreset::NamedPreset( const wxString &_name,
-											const Ogre::YangenManager::Preset &_preset ) :
+											const Ogre::YangenManager::Preset &_preset,
+											const MaterialParams &_material ) :
 	name( _name ),
-	preset( _preset )
+	preset( _preset ),
+	material( _material )
 {
 }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yangenManager ) :
+TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yangenManager,
+									Ogre::MaterialSwitcher *materialSwitcher ) :
 	TexturePanel( parent ),
 	mInitializing( true ),
 	m_isInCustomPreset( true ),
-	m_yangenManager( yangenManager )
+	m_yangenManager( yangenManager ),
+	m_materialSwitcher( materialSwitcher )
 {
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_normalMapDepth0Slider, m_normalMapDepth0TextCtrl, -20.0f, 20.0f ),
@@ -78,6 +80,10 @@ TexturePanelImpl::TexturePanelImpl( wxWindow *parent, Ogre::YangenManager *yange
 	mapSliderAndTextCtrl(
 		new ConvertScaled( m_roughnessExponentSlider, m_roughnessExponentTextCtrl, 0.0f, 2.0f ),
 		m_yangenManager->getRoughnessExponent() );
+
+	Ogre::HlmsPbsDatablock *datablock = m_materialSwitcher->getFinalRenderDatablock();
+	mapSliderAndTextCtrl( new ConvertUnit( m_fresnelSlider, m_fresnelTextCtrl ),
+						  datablock->getFresnel().x );
 
 	fillPresetsMap();
 
@@ -137,6 +143,7 @@ void TexturePanelImpl::fillPresetsMap()
 	saveCustomPreset();
 
 	Ogre::YangenManager::Preset preset;
+	MaterialParams material;
 
 	preset.nmStrength[0] = 7.000000f;
 	preset.nmSteepness[0] = 0.800000f;
@@ -151,8 +158,9 @@ void TexturePanelImpl::fillPresetsMap()
 	preset.roughnessMidpoint = 0.420000f;
 	preset.roughnessScale = -0.320000f;
 	preset.roughnessExponent = 0.240000f;
+	material.fresnel = 0.47000f;
 
-	m_presets.push_back( NamedPreset( "Bricks (Clean heightmap)", preset ) );
+	m_presets.push_back( NamedPreset( "Bricks (Clean heightmap)", preset, material ) );
 
 	preset.nmStrength[0] = 7.200000f;
 	preset.nmSteepness[0] = 0.800000f;
@@ -167,8 +175,9 @@ void TexturePanelImpl::fillPresetsMap()
 	preset.roughnessMidpoint = 0.500000f;
 	preset.roughnessScale = 1.520000f;
 	preset.roughnessExponent = 0.620000f;
+	material.fresnel = 0.17000f;
 
-	m_presets.push_back( NamedPreset( "Bricks (Noisy diffuse)", preset ) );
+	m_presets.push_back( NamedPreset( "Bricks (Noisy diffuse)", preset, material ) );
 
 	preset.nmStrength[0] = 2.400000f;
 	preset.nmSteepness[0] = 0.800000f;
@@ -183,8 +192,9 @@ void TexturePanelImpl::fillPresetsMap()
 	preset.roughnessMidpoint = 0.560000f;
 	preset.roughnessScale = 1.520000f;
 	preset.roughnessExponent = 0.620000f;
+	material.fresnel = 1.00000f;
 
-	m_presets.push_back( NamedPreset( "Marble tile", preset ) );
+	m_presets.push_back( NamedPreset( "Marble tile", preset, material ) );
 
 	preset.nmStrength[0] = 1.800000f;
 	preset.nmSteepness[0] = 0.800000f;
@@ -199,13 +209,15 @@ void TexturePanelImpl::fillPresetsMap()
 	preset.roughnessMidpoint = 0.920000f;
 	preset.roughnessScale = -4.000000f;
 	preset.roughnessExponent = 0.920000f;
+	material.fresnel = 0.47000f;
 
-	m_presets.push_back( NamedPreset( "Old bathroom small tiles", preset ) );
+	m_presets.push_back( NamedPreset( "Old bathroom small tiles", preset, material ) );
 }
 //-----------------------------------------------------------------------------
 void TexturePanelImpl::saveCustomPreset()
 {
 	Ogre::YangenManager::Preset preset;
+	MaterialParams material;
 
 	const size_t c_numStrengthTextCtrls = 3u;
 	const size_t c_numNmRadiusTextCtrls = 2u;
@@ -223,7 +235,9 @@ void TexturePanelImpl::saveCustomPreset()
 	preset.roughnessScale = m_yangenManager->getRoughnessScale();
 	preset.roughnessExponent = m_yangenManager->getRoughnessExponent();
 
-	m_presets.push_back( NamedPreset( "Custom", preset ) );
+	material.fresnel = m_materialSwitcher->getFinalRenderDatablock()->getFresnel().x;
+
+	m_presets.push_back( NamedPreset( "Custom", preset, material ) );
 }
 //-----------------------------------------------------------------------------
 void TexturePanelImpl::mapSliderAndTextCtrl( ConversionBase *converter )
@@ -335,6 +349,7 @@ void TexturePanelImpl::OnChoice( wxCommandEvent &event )
 		m_isInCustomPreset = selection == 0u;
 
 		const Ogre::YangenManager::Preset &preset = m_presets[selection].preset;
+		const MaterialParams &material = m_presets[selection].material;
 
 		// Suspend notifications (otherwise each setting being changed will trigger a rebuild)
 		mInitializing = true;
@@ -373,7 +388,11 @@ void TexturePanelImpl::OnChoice( wxCommandEvent &event )
 		m_roughnessExponentTextCtrl->SetValue(
 			wxString::Format( wxT( "%.05lf" ), preset.roughnessExponent ) );
 
+		m_fresnelTextCtrl->SetValue( wxString::Format( wxT( "%.05lf" ), material.fresnel ) );
+
 		m_yangenManager->setPreset( preset );
+		Ogre::HlmsPbsDatablock *datablock = m_materialSwitcher->getFinalRenderDatablock();
+		datablock->setFresnel( Ogre::Vector3( material.fresnel ), false );
 
 		mInitializing = false;
 	}
@@ -476,13 +495,20 @@ void TexturePanelImpl::valueUpdated( wxTextCtrl *textCtrl )
 		m_yangenManager->process();
 		return;
 	}
+
+	if( textCtrl == m_fresnelTextCtrl )
+	{
+		Ogre::HlmsPbsDatablock *datablock = m_materialSwitcher->getFinalRenderDatablock();
+		datablock->setFresnel( Ogre::Vector3( getValueFrom( textCtrl, 1.0f ) ), false );
+		return;
+	}
 }
 //-----------------------------------------------------------------------------
 void TexturePanelImpl::dumpPresetToClipboard()
 {
 	EmptyLwString<2048> dumpStr;
 
-	dumpStr.a( "Ogre::YangenManager::Preset preset;\n" );
+	dumpStr.a( "Ogre::YangenManager::Preset preset;\nMaterialParams material;\n" );
 
 	for( uint8_t i = 0u; i < 3u; ++i )
 	{
@@ -502,6 +528,8 @@ void TexturePanelImpl::dumpPresetToClipboard()
 	dumpStr.a( "preset.roughnessMidpoint = ", m_yangenManager->getRoughnessMidpoint(), "f;\n" );
 	dumpStr.a( "preset.roughnessScale = ", m_yangenManager->getRoughnessScale(), "f;\n" );
 	dumpStr.a( "preset.roughnessExponent = ", m_yangenManager->getRoughnessExponent(), "f;\n" );
+	dumpStr.a( "material.fresnel = ", m_materialSwitcher->getFinalRenderDatablock()->getFresnel().x,
+			   "f;\n" );
 
 	wxClipboard *clip = wxClipboard::Get();
 	if( clip->Open() )
