@@ -185,6 +185,22 @@ void TexturePanelImpl::fillPresetsMap()
 	preset.roughnessExponent = 0.620000f;
 
 	m_presets.push_back( NamedPreset( "Marble tile", preset ) );
+
+	preset.nmStrength[0] = 1.800000f;
+	preset.nmSteepness[0] = 0.800000f;
+	preset.nmStrength[1] = 3.200000f;
+	preset.nmSteepness[1] = 4.600000f;
+	preset.nmStrength[2] = 0.000000f;
+	preset.nmSteepness[2] = 0.000000f;
+	preset.nmRadius[0] = 14u;
+	preset.nmRadius[1] = 2u;
+	preset.roughnessBlurOffset = 0u;
+	preset.roughnessBlurAmplitude = 28u;
+	preset.roughnessMidpoint = 0.920000f;
+	preset.roughnessScale = -4.000000f;
+	preset.roughnessExponent = 0.920000f;
+
+	m_presets.push_back( NamedPreset( "Old bathroom small tiles", preset ) );
 }
 //-----------------------------------------------------------------------------
 void TexturePanelImpl::saveCustomPreset()
