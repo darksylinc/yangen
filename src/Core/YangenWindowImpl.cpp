@@ -292,8 +292,6 @@ void YangenWindowImpl::initOgre( bool bForceSetup )
 	Ogre::LogManager::getSingleton().getDefaultLog()->addListener( this );
 	createSystems();
 
-	loadHlmsDiskCache();
-
 	// Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 	// m_wxAuiManager->AddPane( m_wxOgreRenderWindow, wxLEFT|wxTOP, wxT("OGRE Render Window"));
 	m_wxAuiManager->AddPane( m_wxOgreRenderWindow, wxAuiPaneInfo()
@@ -357,6 +355,9 @@ void YangenWindowImpl::createSystems()
 
 	createPlaneMesh();
 	loadPlanePreview();
+
+	// loadHlmsDiskCache MUST happen before calling m_yangenManager->populateShaderCache()
+	loadHlmsDiskCache();
 
 	m_yangenManager =
 		new Ogre::YangenManager( "GeneratedTexture", m_root->getHlmsManager(), compositorManager,

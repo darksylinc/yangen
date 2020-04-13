@@ -119,7 +119,7 @@ namespace Ogre
 
 			Saving the microcode cache to disk speeds up this enormously.
 		@param maxBlurRadius
-			Maximum blur radius to cache, non-inclusive.
+			Maximum blur radius to cache, inclusive.
 			The bigger this value, the longer it will take
 		*/
 		void populateShaderCache( uint8 maxBlurRadius );

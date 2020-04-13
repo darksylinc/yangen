@@ -154,7 +154,7 @@ namespace Ogre
 			GpuNamedConstants::getGenerateAllConstantDefinitionArrayEntries();
 		GpuNamedConstants::setGenerateAllConstantDefinitionArrayEntries( true );
 
-		for( size_t i = 0u; i < maxBlurRadius; i += 2u )
+		for( size_t i = 0u; i <= maxBlurRadius; i += 2u )
 		{
 			HlmsCompute *hlmsCompute =
 				static_cast<HlmsCompute *>( m_heightmapToNormalJob->getCreator() );
