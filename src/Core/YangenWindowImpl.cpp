@@ -433,9 +433,6 @@ void YangenWindowImpl::loadResources()
 
 	registerHlms();
 
-	// loadHlmsDiskCache MUST happen before calling m_yangenManager->populateShaderCache()
-	loadHlmsDiskCache();
-
 #ifndef DEBUG
 	// Do NOT dump our shaders in the Release build. It's very unprofessional
 	Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
@@ -452,6 +449,9 @@ void YangenWindowImpl::loadResources()
 			hlms->setDebugOutputPath( false, false );
 	}
 #endif
+
+	// loadHlmsDiskCache MUST happen before calling m_yangenManager->populateShaderCache()
+	loadHlmsDiskCache();
 
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups( true );
 }
