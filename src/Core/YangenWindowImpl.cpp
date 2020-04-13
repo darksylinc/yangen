@@ -437,16 +437,19 @@ void YangenWindowImpl::loadResources()
 	loadHlmsDiskCache();
 
 #ifndef DEBUG
+	// Do NOT dump our shaders in the Release build. It's very unprofessional
 	Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
 
 	for( size_t i = 0u; i < Ogre::HlmsTypes::HLMS_MAX; ++i )
 	{
 		Ogre::Hlms *hlms = hlmsManager->getHlms( static_cast<Ogre::HlmsTypes>( i ) );
-		hlms->setDebugOutputPath( false, false );
+		if( hlms )
+			hlms->setDebugOutputPath( false, false );
 	}
 	{
 		Ogre::Hlms *hlms = hlmsManager->getComputeHlms();
-		hlms->setDebugOutputPath( false, false );
+		if( hlms )
+			hlms->setDebugOutputPath( false, false );
 	}
 #endif
 
