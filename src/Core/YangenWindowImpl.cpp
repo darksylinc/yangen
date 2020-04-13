@@ -19,6 +19,7 @@
 
 #include "OgreException.h"
 #include "OgreFrameStats.h"
+#include "OgreHlmsDiskCache.h"
 #include "OgreImage2.h"
 #include "OgreMesh2.h"
 #include "OgreMeshManager2.h"
@@ -65,6 +66,8 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 	m_mainNotebook( 0 ),
 	m_texturePanelImpl( 0 ),
 	m_visualizationPanelImpl( 0 ),
+	m_useMicrocodeCache( true ),
+	m_useHlmsDiskCache( true ),
 	m_wasLeftPressed( false ),
 	m_wasRightPressed( false ),
 	m_mouseX( 0 ),
@@ -77,9 +80,9 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 {
 #ifndef __WXMSW__
 	// Set config directory to user home directory
-	m_configDirectory = std::string( wxGetHomeDir().mb_str() ) + "/.config/yangen/";
+	m_writeAccessFolder = std::string( wxGetHomeDir().mb_str() ) + "/.config/yangen/";
 	{
-		wxString configDir( m_configDirectory.c_str(), wxConvUTF8 );
+		wxString configDir( m_writeAccessFolder.c_str(), wxConvUTF8 );
 		if( !wxDirExists( configDir ) )
 		{
 			if( !wxMkdir( configDir ) )
@@ -87,7 +90,7 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 				wxMessageBox( wxT( "Warning, no R/W access to " ) + configDir +
 								  wxT( "\nYangen may not function properly or crash" ),
 							  wxT( "ACCESS ERROR" ), wxOK | wxICON_ERROR | wxCENTRE );
-				m_configDirectory = "";
+				m_writeAccessFolder = "";
 			}
 		}
 		else
@@ -112,23 +115,23 @@ YangenWindowImpl::YangenWindowImpl( wxWindow *parent, const CmdSettings &cmdSett
 #	if defined( _UNICODE ) || defined( UNICODE )
 		int size_needed =
 			WideCharToMultiByte( CP_OEMCP, 0, path, (int)wcslen( path ), NULL, 0, NULL, NULL );
-		m_configDirectory = std::string( size_needed, 0 );
-		WideCharToMultiByte( CP_OEMCP, 0, path, (int)wcslen( path ), &m_configDirectory[0], size_needed,
-							 NULL, NULL );
+		m_writeAccessFolder = std::string( size_needed, 0 );
+		WideCharToMultiByte( CP_OEMCP, 0, path, (int)wcslen( path ), &m_writeAccessFolder[0],
+							 size_needed, NULL, NULL );
 #	else
 		TCHAR oemPath[MAX_PATH];
 		CharToOem( path, oemPath );
-		m_configDirectory = std::string( oemPath );
+		m_writeAccessFolder = std::string( oemPath );
 #	endif
-		m_configDirectory += "\\Yangen\\";
+		m_writeAccessFolder += "\\Yangen\\";
 
 		// Attempt to create directory where config files go
-		if( !CreateDirectoryA( m_configDirectory.c_str(), NULL ) &&
+		if( !CreateDirectoryA( m_writeAccessFolder.c_str(), NULL ) &&
 			GetLastError() != ERROR_ALREADY_EXISTS )
 		{
 			// Couldn't create directory (no write access?),
 			// fall back to current working dir
-			m_configDirectory = "";
+			m_writeAccessFolder = "";
 		}
 	}
 #endif
@@ -190,6 +193,8 @@ YangenWindowImpl::~YangenWindowImpl()
 	// saveSettings();
 	unloadPreview();
 
+	saveHlmsDiskCache();
+
 	delete m_materialSwitcher;
 	m_materialSwitcher = 0;
 
@@ -238,7 +243,7 @@ void YangenWindowImpl::loadSettings()
 {
 	{
 		// Load wxAUI layout
-		std::ifstream myFile( ( m_configDirectory + c_layoutSettingsFile ).c_str(),
+		std::ifstream myFile( ( m_writeAccessFolder + c_layoutSettingsFile ).c_str(),
 							  std::ios_base::in | std::ios_base::ate | std::ios_base::binary );
 		if( myFile.is_open() )
 		{
@@ -269,8 +274,8 @@ void YangenWindowImpl::initOgre( bool bForceSetup )
 
 	const char *pluginsFile = "Plugins.cfg";
 
-	m_root = new Ogre::Root( c_pluginsCfg + pluginsFile, m_configDirectory + "ogre.cfg",
-							 m_configDirectory + "Ogre.log" );
+	m_root = new Ogre::Root( c_pluginsCfg + pluginsFile, m_writeAccessFolder + "ogre.cfg",
+							 m_writeAccessFolder + "Ogre.log" );
 	if( bForceSetup || !m_root->restoreConfig() )
 		m_root->showConfigDialog();
 
@@ -286,6 +291,8 @@ void YangenWindowImpl::initOgre( bool bForceSetup )
 
 	Ogre::LogManager::getSingleton().getDefaultLog()->addListener( this );
 	createSystems();
+
+	loadHlmsDiskCache();
 
 	// Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 	// m_wxAuiManager->AddPane( m_wxOgreRenderWindow, wxLEFT|wxTOP, wxT("OGRE Render Window"));
@@ -529,6 +536,104 @@ void YangenWindowImpl::registerHlms()
 			hlmsPbs->setTextureBufferDefaultSize( 512 * 1024 );
 			hlmsUnlit->setTextureBufferDefaultSize( 512 * 1024 );
 		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+void YangenWindowImpl::loadHlmsDiskCache()
+{
+	if( !m_useMicrocodeCache && !m_useHlmsDiskCache )
+		return;
+
+	Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
+	Ogre::HlmsDiskCache diskCache( hlmsManager );
+
+	Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
+
+	Ogre::Archive *rwAccessFolderArchive =
+		archiveManager.load( m_writeAccessFolder, "FileSystem", true );
+
+	if( m_useMicrocodeCache )
+	{
+		// Make sure the microcode cache is enabled.
+		Ogre::GpuProgramManager::getSingleton().setSaveMicrocodesToCache( true );
+		const Ogre::String filename = "microcodeCodeCache.cache";
+		if( rwAccessFolderArchive->exists( filename ) )
+		{
+			Ogre::DataStreamPtr shaderCacheFile = rwAccessFolderArchive->open( filename );
+			Ogre::GpuProgramManager::getSingleton().loadMicrocodeCache( shaderCacheFile );
+		}
+	}
+
+	if( m_useHlmsDiskCache )
+	{
+		for( size_t i = Ogre::HLMS_LOW_LEVEL + 1u; i < Ogre::HLMS_MAX; ++i )
+		{
+			Ogre::Hlms *hlms = hlmsManager->getHlms( static_cast<Ogre::HlmsTypes>( i ) );
+			if( hlms )
+			{
+				Ogre::String filename = "hlmsDiskCache" + Ogre::StringConverter::toString( i ) + ".bin";
+
+				try
+				{
+					if( rwAccessFolderArchive->exists( filename ) )
+					{
+						Ogre::DataStreamPtr diskCacheFile = rwAccessFolderArchive->open( filename );
+						diskCache.loadFrom( diskCacheFile );
+						diskCache.applyTo( hlms );
+					}
+				}
+				catch( Ogre::Exception & )
+				{
+					Ogre::LogManager::getSingleton().logMessage(
+						"Error loading cache from " + m_writeAccessFolder + "/" + filename +
+						"! If you have issues, try deleting the file "
+						"and restarting the app" );
+				}
+			}
+		}
+	}
+
+	archiveManager.unload( m_writeAccessFolder );
+}
+//-----------------------------------------------------------------------------
+void YangenWindowImpl::saveHlmsDiskCache()
+{
+	if( m_root && m_root->getRenderSystem() && Ogre::GpuProgramManager::getSingletonPtr() &&
+		( m_useMicrocodeCache || m_useHlmsDiskCache ) )
+	{
+		Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
+		Ogre::HlmsDiskCache diskCache( hlmsManager );
+
+		Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
+
+		Ogre::Archive *rwAccessFolderArchive =
+			archiveManager.load( m_writeAccessFolder, "FileSystem", false );
+
+		if( m_useHlmsDiskCache )
+		{
+			for( size_t i = Ogre::HLMS_LOW_LEVEL + 1u; i < Ogre::HLMS_MAX; ++i )
+			{
+				Ogre::Hlms *hlms = hlmsManager->getHlms( static_cast<Ogre::HlmsTypes>( i ) );
+				if( hlms )
+				{
+					diskCache.copyFrom( hlms );
+
+					Ogre::DataStreamPtr diskCacheFile = rwAccessFolderArchive->create(
+						"hlmsDiskCache" + Ogre::StringConverter::toString( i ) + ".bin" );
+					diskCache.saveTo( diskCacheFile );
+				}
+			}
+		}
+
+		if( Ogre::GpuProgramManager::getSingleton().isCacheDirty() && m_useMicrocodeCache )
+		{
+			const Ogre::String filename = "microcodeCodeCache.cache";
+			Ogre::DataStreamPtr shaderCacheFile = rwAccessFolderArchive->create( filename );
+			Ogre::GpuProgramManager::getSingleton().saveMicrocodeCache( shaderCacheFile );
+		}
+
+		archiveManager.unload( m_writeAccessFolder );
 	}
 }
 

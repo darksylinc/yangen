@@ -63,6 +63,9 @@ class YangenWindowImpl : public YangenWindow,
 	TexturePanelImpl *      m_texturePanelImpl;
 	VisualizationPanelImpl *m_visualizationPanelImpl;
 
+	bool m_useMicrocodeCache;
+	bool m_useHlmsDiskCache;
+
 	// Control camera movement through mouse
 	bool m_wasLeftPressed;
 	bool m_wasRightPressed;
@@ -80,7 +83,7 @@ class YangenWindowImpl : public YangenWindow,
 	wxString m_lastOpenDir;
 
 	// Directory where we have write access to write our settings
-	std::string m_configDirectory;
+	std::string m_writeAccessFolder;
 
 	void loadSettings();
 	void initOgre( bool bForceSetup );
@@ -89,6 +92,8 @@ class YangenWindowImpl : public YangenWindow,
 							  const Ogre::String &secName );
 	void loadResources();
 	void registerHlms();
+	void loadHlmsDiskCache();
+	void saveHlmsDiskCache();
 	void createLogWindow( bool bShow );
 
 	void createPlaneMesh();
