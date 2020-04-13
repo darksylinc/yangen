@@ -356,9 +356,6 @@ void YangenWindowImpl::createSystems()
 	createPlaneMesh();
 	loadPlanePreview();
 
-	// loadHlmsDiskCache MUST happen before calling m_yangenManager->populateShaderCache()
-	loadHlmsDiskCache();
-
 	m_yangenManager =
 		new Ogre::YangenManager( "GeneratedTexture", m_root->getHlmsManager(), compositorManager,
 								 m_root->getRenderSystem()->getTextureGpuManager(), m_sceneManager );
@@ -435,6 +432,23 @@ void YangenWindowImpl::loadResources()
 	}
 
 	registerHlms();
+
+	// loadHlmsDiskCache MUST happen before calling m_yangenManager->populateShaderCache()
+	loadHlmsDiskCache();
+
+#ifndef DEBUG
+	Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
+
+	for( size_t i = 0u; i < Ogre::HlmsTypes::HLMS_MAX; ++i )
+	{
+		Ogre::Hlms *hlms = hlmsManager->getHlms( static_cast<Ogre::HlmsTypes>( i ) );
+		hlms->setDebugOutputPath( false, false );
+	}
+	{
+		Ogre::Hlms *hlms = hlmsManager->getComputeHlms();
+		hlms->setDebugOutputPath( false, false );
+	}
+#endif
 
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups( true );
 }
