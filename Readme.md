@@ -42,3 +42,16 @@ Under it you will create two symbolic links to where Ogre source code repositori
 Set CMake GUI binaries to point to Project/Yangen/build
 
 Click Generate.
+
+
+# Uninstall
+
+## Windows
+
+All config files are in %APPDATA%\Yangen
+Remove that folder and you're done
+
+## Linux
+
+All config files are in ~/.config/yangen
+Remove that folder and you're done
