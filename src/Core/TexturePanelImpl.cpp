@@ -394,6 +394,8 @@ void TexturePanelImpl::OnChoice( wxCommandEvent &event )
 		Ogre::HlmsPbsDatablock *datablock = m_materialSwitcher->getFinalRenderDatablock();
 		datablock->setFresnel( Ogre::Vector3( material.fresnel ), false );
 
+		m_yangenManager->process();
+
 		mInitializing = false;
 	}
 }
