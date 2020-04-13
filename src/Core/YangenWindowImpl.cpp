@@ -357,7 +357,7 @@ void YangenWindowImpl::createSystems()
 	m_materialSwitcher = new Ogre::MaterialSwitcher( m_root->getHlmsManager(), m_yangenManager );
 	try
 	{
-		m_yangenManager->loadFromDiffusemap( "Sample04.png",
+		m_yangenManager->loadFromDiffusemap( "Yosoygames_Logo.png",
 											 Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
 		m_materialSwitcher->prepareMaterials();
 		m_yangenManager->process();
