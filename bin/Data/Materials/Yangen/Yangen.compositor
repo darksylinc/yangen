@@ -165,3 +165,35 @@ workspace Yangen/ToGreyscale
 	connect_external 0 Yangen/ToGreyscale 0
 	connect_external 1 Yangen/ToGreyscale 1
 }
+
+compositor_node Yangen/PopulateShaderCache
+{
+	in 0 greyscale_map
+
+	texture tmpGaussianFilter0	target_width target_height 1 2d_array PFG_R16_UNORM uav
+	texture tmpGaussianFilter1	target_width target_height 1 2d_array PFG_R16_UNORM uav
+
+	target greyscale_map
+	{
+		pass compute
+		{
+			job Yangen/GaussianBlurH
+			input 0 greyscale_map
+			uav 0 tmpGaussianFilter0 write
+
+			identifier 21
+		}
+
+		pass compute
+		{
+			job Yangen/GaussianBlurV
+			input 0 tmpGaussianFilter0
+			uav 0 tmpGaussianFilter1 write
+		}
+	}
+}
+
+workspace Yangen/PopulateShaderCache
+{
+	connect_external 0 Yangen/PopulateShaderCache 0
+}

@@ -361,6 +361,7 @@ void YangenWindowImpl::createSystems()
 	m_yangenManager =
 		new Ogre::YangenManager( "GeneratedTexture", m_root->getHlmsManager(), compositorManager,
 								 m_root->getRenderSystem()->getTextureGpuManager(), m_sceneManager );
+	m_yangenManager->populateShaderCache( 64u );
 	m_materialSwitcher = new Ogre::MaterialSwitcher( m_root->getHlmsManager(), m_yangenManager );
 	try
 	{

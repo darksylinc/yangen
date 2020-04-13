@@ -138,6 +138,43 @@ namespace Ogre
 		m_waitableTexture = 0;
 	}
 	//-------------------------------------------------------------------------
+	void YangenManager::populateShaderCache( uint8 maxBlurRadius )
+	{
+		TextureGpu *tempTex = m_textureGpuManager->createOrRetrieveTexture(
+			"## YangenShaderCachePopulator ##", GpuPageOutStrategy::Discard, TextureFlags::Uav,
+			TextureTypes::Type2DArray );
+		tempTex->setResolution( 4u, 4u );
+		tempTex->setPixelFormat( PFG_R8_UNORM );
+		tempTex->scheduleTransitionTo( GpuResidency::Resident );
+
+		CompositorWorkspace *workspace = m_compositorManager->addWorkspace(
+			m_sceneManager, tempTex, m_dummyCamera, "Yangen/PopulateShaderCache", false );
+
+		m_defaultGenerateAllConstantDefinitionArrayEntries =
+			GpuNamedConstants::getGenerateAllConstantDefinitionArrayEntries();
+		GpuNamedConstants::setGenerateAllConstantDefinitionArrayEntries( true );
+
+		for( size_t i = 0u; i < maxBlurRadius; i += 2u )
+		{
+			HlmsCompute *hlmsCompute =
+				static_cast<HlmsCompute *>( m_heightmapToNormalJob->getCreator() );
+			HlmsComputeJob *gaussJob = 0;
+
+			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurH" );
+			setGaussianFilterParams( gaussJob, static_cast<uint8>( i ), 0.5f );
+
+			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurV" );
+			setGaussianFilterParams( gaussJob, static_cast<uint8>( i ), 0.5f );
+
+			workspace->_beginUpdate( false );
+			workspace->_update();
+			workspace->_endUpdate( false );
+		}
+
+		GpuNamedConstants::setGenerateAllConstantDefinitionArrayEntries(
+			m_defaultGenerateAllConstantDefinitionArrayEntries );
+	}
+	//-------------------------------------------------------------------------
 	void YangenManager::loadFromDiffusemap( const String &filename, const String &resourceGroup )
 	{
 		unloadTextures();
@@ -159,7 +196,7 @@ namespace Ogre
 			m_texName + "/Roughness", GpuPageOutStrategy::Discard, TextureFlags::Uav,
 			TextureTypes::Type2DArray, resourceGroup );
 
-		m_waitableTexture = m_heightMap;
+		m_waitableTexture = m_diffuseMap;
 
 		m_diffuseMap->waitForMetadata();
 
@@ -643,7 +680,7 @@ namespace Ogre
 
 			uint8 radius = m_heightMapToNormalMapBlurRadius[identifier - 21u];
 			if( m_normalMapStrength[identifier - 20u] == 0.0f )
-				radius = 0u; // Don't waste performance if it's not gonna be used
+				radius = 0u;  // Don't waste performance if it's not gonna be used
 
 			gaussJob = hlmsCompute->findComputeJob( "Yangen/GaussianBlurH" );
 			setGaussianFilterParams( gaussJob, radius, 0.5f );

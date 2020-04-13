@@ -106,6 +106,24 @@ namespace Ogre
 					   SceneManager *sceneManager );
 		virtual ~YangenManager();
 
+		/** D3D11 can take a long time to compile the Gaussian Blur's compute shader.
+			This makes the UI/UX horribly slow when the user changes the blur slider since
+			a new shader needs to be recompiled
+
+			This function populates the shader cache with all possible variants of our
+			gaussian blur so that compilation happens at startup time, not when
+			the user moves the slider
+
+			Ogre::GpuProgramManager::getSingleton().setSaveMicrocodesToCache must be set
+			to true for this to work
+
+			Saving the microcode cache to disk speeds up this enormously.
+		@param maxBlurRadius
+			Maximum blur radius to cache, non-inclusive.
+			The bigger this value, the longer it will take
+		*/
+		void populateShaderCache( uint8 maxBlurRadius );
+
 		/** Loads from a diffuse. Generates the heightmap from the diffuse map
 		@param filename
 		@param resourceGroup
