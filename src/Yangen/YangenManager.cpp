@@ -6,9 +6,11 @@
 
 #include "Yangen/YangenManager.h"
 
+#include "OgreGpuProgramManager.h"
 #include "OgreHlmsCompute.h"
 #include "OgreHlmsComputeJob.h"
 #include "OgreHlmsManager.h"
+#include "OgreLogManager.h"
 #include "OgreRoot.h"
 #include "OgreTextureGpuManager.h"
 
@@ -140,6 +142,15 @@ namespace Ogre
 	//-------------------------------------------------------------------------
 	void YangenManager::populateShaderCache( uint8 maxBlurRadius )
 	{
+		if( !GpuProgramManager::getSingleton().getSaveMicrocodesToCache() )
+		{
+			LogManager::getSingleton().logMessage(
+				"Error: called YangenManager::populateShaderCache but getSaveMicrocodesToCache is "
+				"false. Ignoring this call",
+				LML_CRITICAL );
+			return;
+		}
+
 		TextureGpu *tempTex = m_textureGpuManager->createOrRetrieveTexture(
 			"## YangenShaderCachePopulator ##", GpuPageOutStrategy::Discard, TextureFlags::Uav,
 			TextureTypes::Type2DArray );
