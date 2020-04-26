@@ -30,8 +30,12 @@ namespace Ogre
 
 		YangenManager *m_yangenManager;
 
+		/// 50% grey. For normal map display
+		TextureGpu *m_grey50;
+
 	public:
-		MaterialSwitcher( HlmsManager *hlmsManager, YangenManager *yangenManager );
+		MaterialSwitcher( HlmsManager *hlmsManager, TextureGpuManager *textureGpuManager,
+						  YangenManager *yangenManager );
 		~MaterialSwitcher();
 
 		void prepareMaterials();

@@ -360,7 +360,8 @@ void YangenWindowImpl::createSystems()
 		new Ogre::YangenManager( "GeneratedTexture", m_root->getHlmsManager(), compositorManager,
 								 m_root->getRenderSystem()->getTextureGpuManager(), m_sceneManager );
 	m_yangenManager->populateShaderCache( 64u );
-	m_materialSwitcher = new Ogre::MaterialSwitcher( m_root->getHlmsManager(), m_yangenManager );
+	m_materialSwitcher = new Ogre::MaterialSwitcher(
+		m_root->getHlmsManager(), m_root->getRenderSystem()->getTextureGpuManager(), m_yangenManager );
 	try
 	{
 		m_yangenManager->loadFromDiffusemap( "Yosoygames_Logo.png",
@@ -975,7 +976,6 @@ void YangenWindowImpl::loadTexture( const Ogre::String &diffuseFullpath,
 	catch( Ogre::Exception &e )
 	{
 		Ogre::LogManager::getSingleton().logMessage( e.getFullDescription() );
-		throw;
 	}
 }
 //-----------------------------------------------------------------------------
@@ -992,7 +992,6 @@ void YangenWindowImpl::saveTexture( const Ogre::String &fullpath, Ogre::TextureG
 	catch( Ogre::Exception &e )
 	{
 		Ogre::LogManager::getSingleton().logMessage( e.getFullDescription() );
-		throw;
 	}
 }
 //-----------------------------------------------------------------------------
@@ -1082,7 +1081,11 @@ void YangenWindowImpl::saveTextureDialog( bool bSavingNormalmap )
 	{
 		stripFilenameFromPath( saveFileDialog.GetPath(), m_lastOpenDir );
 
-		const Ogre::String fullpath = Ogre::String( saveFileDialog.GetPath().mb_str() );
+		Ogre::String fullpath = Ogre::String( saveFileDialog.GetPath().mb_str() );
+
+		Ogre::String::size_type pos = fullpath.find_last_of( '.' );
+		if( pos == Ogre::String::npos || pos + 5u < fullpath.size() )
+			fullpath += ".png";
 
 		Ogre::TextureGpu *texToSave =
 			bSavingNormalmap ? m_yangenManager->getNormalMap() : m_yangenManager->getRoughnessMap();

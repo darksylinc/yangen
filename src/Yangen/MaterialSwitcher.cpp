@@ -15,12 +15,31 @@
 
 #include "OgreHlmsUnlit.h"
 #include "OgreHlmsUnlitDatablock.h"
+#include "OgreTextureBox.h"
+#include "OgreTextureGpuManager.h"
 
 namespace Ogre
 {
-	MaterialSwitcher::MaterialSwitcher( HlmsManager *hlmsManager, YangenManager *yangenManager ) :
-		m_yangenManager( yangenManager )
+	MaterialSwitcher::MaterialSwitcher( HlmsManager *hlmsManager, TextureGpuManager *textureGpuManager,
+										YangenManager *yangenManager ) :
+		m_yangenManager( yangenManager ),
+		m_grey50( 0 )
 	{
+		{
+			m_grey50 = textureGpuManager->createTexture( "Yangen/Grey50", GpuPageOutStrategy::Discard,
+														 TextureFlags::ManualTexture,
+														 TextureTypes::Type2DArray );
+			m_grey50->setResolution( 1u, 1u );
+			m_grey50->setPixelFormat( PFG_RGBA8_UNORM );
+			m_grey50->scheduleTransitionTo( GpuResidency::Resident );
+
+			Ogre::Image2 greyImg;
+			greyImg.createEmptyImageLike( m_grey50 );
+			greyImg.getData( 0u ).setColourAt( ColourValue( 0.5f, 0.5f, 0.5f ), 0u, 0u, 0u,
+											   greyImg.getPixelFormat() );
+			greyImg.uploadTo( m_grey50, 0u, 0u );
+		}
+
 		assert( dynamic_cast<Ogre::HlmsPbs *>( hlmsManager->getHlms( Ogre::HLMS_PBS ) ) );
 		Ogre::HlmsPbs *hlmsPbs = static_cast<Ogre::HlmsPbs *>( hlmsManager->getHlms( HLMS_PBS ) );
 
@@ -48,6 +67,10 @@ namespace Ogre
 			hlmsUnlit->createDatablock( datablockName, datablockName, Ogre::HlmsMacroblock(),
 										Ogre::HlmsBlendblock(), Ogre::HlmsParamVec() ) );
 		m_datablocks[YangenVisualizationModes::Normal] = unlitDatablock;
+		unlitDatablock->setTexture( 1u, m_grey50 );
+		unlitDatablock->setBlendMode( 1u, UNLIT_BLEND_MULTIPLY );
+		unlitDatablock->setTexture( 2u, m_grey50 );
+		unlitDatablock->setBlendMode( 2u, UNLIT_BLEND_ADD );
 
 		datablockName = baseName + "/" + StringConverter::toString( numMaterials++ );
 		unlitDatablock = static_cast<Ogre::HlmsUnlitDatablock *>(
@@ -56,7 +79,14 @@ namespace Ogre
 		m_datablocks[YangenVisualizationModes::Roughness] = unlitDatablock;
 	}
 	//-------------------------------------------------------------------------
-	MaterialSwitcher::~MaterialSwitcher() {}
+	MaterialSwitcher::~MaterialSwitcher()
+	{
+		if( m_grey50 )
+		{
+			m_grey50->getTextureManager()->destroyTexture( m_grey50 );
+			m_grey50 = 0;
+		}
+	}
 	//-------------------------------------------------------------------------
 	void MaterialSwitcher::prepareMaterials()
 	{
