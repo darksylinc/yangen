@@ -5,9 +5,9 @@
 You'll need:
 
  * At least MSVC 2008 (Express Editions work)
- * Ogre 2.2 built via [Quick Start scripts](https://bintray.com/darksylinc/ogre-next/download_file?file_path=build_ogre_scripts-master.7z). Otherwise check out [Setting Up Ogre](https://ogrecave.github.io/ogre-next/api/2.2/_setting_up_ogre.html) on how to compile it.
+ * OgreNext 4.0 built via [Quick Start scripts](https://bintray.com/darksylinc/ogre-next/download_file?file_path=build_ogre_scripts-master.7z). Otherwise check out [Setting Up Ogre](https://ogrecave.github.io/ogre-next/api/latest/_setting_up_ogre.html) on how to compile it.
  * wxWidgets 3.0 SDK with AUI support
- * CMake 3.5 or so.
+ * CMake 4.0 or so.
  * x64 is highly recommended.
 
 ## Windows only:
@@ -37,11 +37,31 @@ Under it you will create two symbolic links to where Ogre source code repositori
     cd Dependencies
     ln -s /home/username/Projects/Ogre Ogre
 
+> [!NOTE]  
+> Due to an incopatibility between FreeImage/libpng bundled by OgreNext 4.0 and the one bundled by Ubuntu
+> you must set environment variable to `LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libpng.so` before launching Yangen.
 
 ## All platforms:
 Set CMake GUI binaries to point to Project/Yangen/build
 
 Click Generate.
+
+
+# Showcase
+
+Yangen supports Normal Map preview. With 3 different slider sections for small, medium and large details:
+
+![]("Docs/NormalMapExample.mp4")
+
+
+Yangen also supports generating roughness maps:
+
+![]("Docs/RoughnessExample.mp4")
+
+
+And of course Yangen supports the final result preview:
+
+![]("Docs/CompletePreviewExample.mp4")
 
 
 # Uninstall
