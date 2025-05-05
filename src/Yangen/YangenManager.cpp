@@ -340,8 +340,6 @@ namespace Ogre
 		CompositorChannelVec channels;
 		channels.reserve( 4u );
 
-		ResourceLayoutMap initialLayouts;
-		ResourceAccessMap initialAccess;
 		if( m_diffuseMap )
 		{
 			channels.clear();
@@ -349,8 +347,6 @@ namespace Ogre
 			channels.push_back( m_greyscaleMap );
 			m_greyscaleWorkspace = m_compositorManager->addWorkspace(
 				m_sceneManager, channels, m_dummyCamera, "Yangen/ToGreyscale", false );
-
-			m_greyscaleWorkspace->fillUavDependenciesForNextWorkspace( initialLayouts, initialAccess );
 		}
 
 		channels.clear();
@@ -359,9 +355,8 @@ namespace Ogre
 		channels.push_back( m_normalMap );
 		channels.push_back( m_roughnessMap );
 
-		m_workspace = m_compositorManager->addWorkspace(
-			m_sceneManager, channels, m_dummyCamera, "Yangen/Gen", false, -1, (UavBufferPackedVec *)0,
-			&initialLayouts, &initialAccess );
+		m_workspace = m_compositorManager->addWorkspace( m_sceneManager, channels, m_dummyCamera,
+														 "Yangen/Gen", false, -1 );
 		m_workspace->addListener( this );
 	}
 	//-------------------------------------------------------------------------
@@ -541,7 +536,7 @@ namespace Ogre
 		for( uint32 i = 0; i < kernelRadius + 1u; i += floatsPerParam )
 		{
 			weightsString.clear();
-			if( job->getCreator()->getShaderProfile() != "hlsl" )
+			if( job->getCreator()->getShaderProfile() == "metal" )
 				weightsString.a( "c_weights[", i, "]" );
 			else
 				weightsString.a( "c_weights[", ( i >> 2u ), "]" );

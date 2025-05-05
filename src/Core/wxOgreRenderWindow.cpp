@@ -216,7 +216,7 @@ Ogre::String wxOgreRenderWindow::GetOgreHandle() const
 	gtk_widget_set_double_buffered( widget, FALSE );
 	gtk_widget_realize( widget );
 
-	Window wid = gdk_x11_drawable_get_xid( gtk_widget_get_window( widget ) );
+	Window wid = gdk_x11_window_get_xid( gtk_widget_get_window( widget ) );
 
 	std::stringstream str;
 	str << wid;

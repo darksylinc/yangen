@@ -5,7 +5,7 @@
 
 project( Yangen )
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required( VERSION 3.5...4.0 )
 
 set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG" )
 set( CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG" )
@@ -53,7 +53,7 @@ endif()
 include( CMake/Dependencies/OGRE.cmake )
 include( CMake/Dependencies/wxWidgets.cmake )
 
-setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES FALSE )
+setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES FALSE FALSE )
 setupWxWidgets( wxWidgets_LIBRARIES GTK2_LIBRARIES OPENGL_LIBRARIES )
 
 # Setup our application
@@ -96,6 +96,6 @@ add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} )
 target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} ${wxWidgets_LIBRARIES} )
 
 if( UNIX )
-	target_link_libraries( Yangen ${GTK2_LIBRARIES} ${OPENGL_LIBRARIES} )
+	target_link_libraries( Yangen ${GTK3_LIBRARIES} )
 endif()
 

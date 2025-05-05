@@ -3,7 +3,7 @@
 # free to make use of it in any way you like.
 #-------------------------------------------------------------------
 
-macro( setupWxWidgets wxWidgets_LIBRARIES GTK2_LIBRARIES OPENGL_LIBRARIES )
+macro( setupWxWidgets wxWidgets_LIBRARIES )
 
 if( WIN32 )
 	set( wxWidgets_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/wxWidgets_3_0" CACHE STRING "Path to wxWidgets 3.0.0 source code" )
@@ -47,17 +47,13 @@ else()
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${wxWidgets_CXX_FLAGS}" )
 endif()
 
-if(UNIX)
-	find_package( GTK2 REQUIRED gtk )
-	include_directories( ${GTK2_INCLUDE_DIRS} )
-	add_definitions( ${GTK2_DEFINITIONS} )
+if( UNIX )
+	# Use the package PkgConfig to detect GTK+ headers/library files
+	find_package( PkgConfig REQUIRED )
+	pkg_check_modules( GTK3 REQUIRED gtk+-3.0 )
 
-	# Thanks to dermont for this fix. Apparently, this is the cause:
-	# https://bugzilla.redhat.com/show_bug.cgi?id=639058
-	#pkg_check_modules(PIXBUF gdk-pixbuf-3.0)
-	#include_directories( ${PIXBUF_INCLUDE_DIRS} )
-
-	find_package(OpenGL)
-endif(UNIX)
+	include_directories( ${GTK3_INCLUDE_DIRS} )
+	add_definitions( ${GTK3_CFLAGS_OTHER} )
+endif()
 
 endmacro()

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jul  5 2019)
+// C++ code generated with wxFormBuilder (version 4.2.1-0-g80c4cb6)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -55,7 +55,7 @@ class YangenWindow : public wxFrame
 		wxMenuBar* m_menubar;
 		wxMenu* m_fileMenu;
 
-		// Virtual event handlers, overide them in your derived class
+		// Virtual event handlers, override them in your derived class
 		virtual void OnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
 
 
@@ -123,7 +123,7 @@ class TexturePanel : public wxPanel
 		wxChoice* m_presetChoice;
 		wxButton* m_copyPresetButton;
 
-		// Virtual event handlers, overide them in your derived class
+		// Virtual event handlers, override them in your derived class
 		virtual void OnScroll( wxScrollEvent& event ) { event.Skip(); }
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnChoice( wxCommandEvent& event ) { event.Skip(); }
@@ -133,6 +133,7 @@ class TexturePanel : public wxPanel
 	public:
 
 		TexturePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 444,771 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
+
 		~TexturePanel();
 
 };
@@ -147,13 +148,14 @@ class VisualizationPanel : public wxPanel
 	protected:
 		wxChoice* m_visualizationChoice;
 
-		// Virtual event handlers, overide them in your derived class
+		// Virtual event handlers, override them in your derived class
 		virtual void OnChoice( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
 
 		VisualizationPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
+
 		~VisualizationPanel();
 
 };

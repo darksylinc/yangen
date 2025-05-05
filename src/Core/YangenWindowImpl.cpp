@@ -17,12 +17,14 @@
 #include "Yangen/MaterialSwitcher.h"
 #include "Yangen/YangenManager.h"
 
+#include "OgreAbiUtils.h"
 #include "OgreException.h"
 #include "OgreFrameStats.h"
 #include "OgreHlmsDiskCache.h"
 #include "OgreImage2.h"
 #include "OgreMesh2.h"
 #include "OgreMeshManager2.h"
+#include "OgrePlatformInformation.h"
 #include "OgreResourceGroupManager.h"
 #include "OgreRoot.h"
 #include "OgreWindow.h"
@@ -48,6 +50,8 @@
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
 #include <wx/wx.h>
+
+#include <fstream>
 
 #ifdef __WXMSW__
 #	include <ShlObj.h>
@@ -274,8 +278,11 @@ void YangenWindowImpl::initOgre( bool bForceSetup )
 
 	const char *pluginsFile = "Plugins.cfg";
 
-	m_root = new Ogre::Root( c_pluginsCfg + pluginsFile, m_writeAccessFolder + "ogre.cfg",
-							 m_writeAccessFolder + "Ogre.log" );
+	{
+		const Ogre::AbiCookie abiCookie = Ogre::generateAbiCookie();
+		m_root = new Ogre::Root( &abiCookie, c_pluginsCfg + pluginsFile,
+								 m_writeAccessFolder + "ogre.cfg", m_writeAccessFolder + "Ogre.log" );
+	}
 	if( bForceSetup || !m_root->restoreConfig() )
 		m_root->showConfigDialog();
 
@@ -587,6 +594,9 @@ void YangenWindowImpl::loadHlmsDiskCache()
 
 	if( m_useHlmsDiskCache )
 	{
+		const size_t numThreads =
+			std::max<size_t>( 1u, Ogre::PlatformInformation::getNumLogicalCores() );
+
 		for( size_t i = Ogre::HLMS_LOW_LEVEL + 1u; i < Ogre::HLMS_MAX; ++i )
 		{
 			Ogre::Hlms *hlms = hlmsManager->getHlms( static_cast<Ogre::HlmsTypes>( i ) );
@@ -600,7 +610,7 @@ void YangenWindowImpl::loadHlmsDiskCache()
 					{
 						Ogre::DataStreamPtr diskCacheFile = rwAccessFolderArchive->open( filename );
 						diskCache.loadFrom( diskCacheFile );
-						diskCache.applyTo( hlms );
+						diskCache.applyTo( hlms, numThreads );
 					}
 				}
 				catch( Ogre::Exception & )

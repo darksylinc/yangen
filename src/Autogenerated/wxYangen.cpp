@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jul  5 2019)
+// C++ code generated with wxFormBuilder (version 4.2.1-0-g80c4cb6)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -113,7 +113,7 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fgSizer5->Add( bSizer15, 1, wxEXPAND, 5 );
 
 	m_normalMapDepth0Slider = new wxSlider( Small->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	fgSizer5->Add( m_normalMapDepth0Slider, 1, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	fgSizer5->Add( m_normalMapDepth0Slider, 1, wxALL|wxEXPAND, 5 );
 
 	m_normalMapDepth0TextCtrl = new wxTextCtrl( Small->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer5->Add( m_normalMapDepth0TextCtrl, 0, wxALL, 5 );
@@ -172,7 +172,7 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fgSizer6->Add( bSizer151, 1, wxEXPAND, 5 );
 
 	m_normalMapDepth1Slider = new wxSlider( Medium->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	fgSizer6->Add( m_normalMapDepth1Slider, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer6->Add( m_normalMapDepth1Slider, 1, wxALL|wxEXPAND, 5 );
 
 	m_normalMapDepth1TextCtrl = new wxTextCtrl( Medium->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer6->Add( m_normalMapDepth1TextCtrl, 0, wxALL, 5 );
@@ -253,7 +253,7 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fgSizer7->Add( bSizer1511, 1, wxEXPAND, 5 );
 
 	m_normalMapDepth2Slider = new wxSlider( Large->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	fgSizer7->Add( m_normalMapDepth2Slider, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	fgSizer7->Add( m_normalMapDepth2Slider, 1, wxALL|wxEXPAND, 5 );
 
 	m_normalMapDepth2TextCtrl = new wxTextCtrl( Large->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer7->Add( m_normalMapDepth2TextCtrl, 0, wxALL, 5 );
@@ -337,7 +337,7 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fgSizer71->Add( bSizer15111, 1, wxEXPAND, 5 );
 
 	m_roughnessBlurOffsetSlider = new wxSlider( sbSizer4->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	fgSizer71->Add( m_roughnessBlurOffsetSlider, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	fgSizer71->Add( m_roughnessBlurOffsetSlider, 1, wxALL|wxEXPAND, 5 );
 
 	m_roughnessBlurOffsetTextCtrl = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer71->Add( m_roughnessBlurOffsetTextCtrl, 0, wxALL, 5 );
@@ -465,7 +465,7 @@ TexturePanel::TexturePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fgSizer711->Add( bSizer151111, 1, wxEXPAND, 5 );
 
 	m_fresnelSlider = new wxSlider( sbSizer41->GetStaticBox(), wxID_EROSION_SLIDER, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	fgSizer711->Add( m_fresnelSlider, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	fgSizer711->Add( m_fresnelSlider, 1, wxALL|wxEXPAND, 5 );
 
 	m_fresnelTextCtrl = new wxTextCtrl( sbSizer41->GetStaticBox(), wxID_EROSION_CTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer711->Add( m_fresnelTextCtrl, 0, wxALL, 5 );
