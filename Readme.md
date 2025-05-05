@@ -51,17 +51,19 @@ Click Generate.
 
 Yangen supports Normal Map preview. With 3 different slider sections for small, medium and large details:
 
-![]("Docs/NormalMapExample.mp4")
+https://github.com/user-attachments/assets/7c560328-6ff5-483d-8a66-b20ef2605809
 
 
 Yangen also supports generating roughness maps:
 
-![]("Docs/RoughnessExample.mp4")
+https://github.com/user-attachments/assets/3daf3068-8607-4a8e-b399-e16341dc916e
 
 
 And of course Yangen supports the final result preview:
 
-![]("Docs/CompletePreviewExample.mp4")
+https://github.com/user-attachments/assets/e4cc3bd0-8a30-4d54-8ce2-7e3104c8eeaf
+
+
 
 
 # Uninstall
